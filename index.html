@@ -256,9 +256,23 @@ const app = initializeApp(firebaseConfig);
 const auth = au.getAuth(app);
 const db = fs.getFirestore(app);
 let user = null;
+let activeUid = null;
 
 const $=s=>document.querySelector(s);
-const logged = () => !!(user && auth.currentUser);
+const logged = () => !!(user && activeUid && auth.currentUser);
+const RULES_HELP = `Cole estas regras no Firestore e clique em Publicar:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /{collection}/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}`;
 const authMsg = code => ({
   "auth/invalid-credential": "E-mail ou senha incorretos.",
   "auth/wrong-password": "E-mail ou senha incorretos.",
@@ -267,39 +281,50 @@ const authMsg = code => ({
   "auth/too-many-requests": "Muitas tentativas. Aguarde e tente de novo.",
   "auth/network-request-failed": "Falha de rede ao conectar no Firebase.",
   "auth/user-disabled": "Esta conta está desativada.",
-  "permission-denied": "Sem permissão no Firestore. Atualize as regras para users/{userId}/… com request.auth.uid == userId."
+  "permission-denied": "Sem permissão no Firestore. As regras precisam liberar users/{seuUid}/…"
 }[code] || "Não foi possível concluir. Tente de novo.");
 
 async function needAuth() {
   if (logged()) return true;
   alert(authMsg("permission-denied"));
-  await au.signOut(auth);
   return false;
 }
 
+let permAlerted = false;
 function dbFail(e) {
-  console.error("[Firestore]", e);
-  const msg = authMsg(e?.code);
+  console.error("[Firestore]", e, { activeUid, pathUser: activeUid });
   if (e?.code === "permission-denied") {
-    au.signOut(auth);
-    $("#le").textContent = msg;
-  } else alert(msg);
+    if (!permAlerted) {
+      permAlerted = true;
+      alert(authMsg(e.code) + "\n\n" + RULES_HELP);
+    }
+    $("#le").textContent = authMsg(e.code);
+  } else alert(authMsg(e?.code));
   throw e;
 }
 
 const cv = o => Object.fromEntries(Object.entries(o).map(([k,v]) => [k, v && v.inc !== undefined ? fs.increment(v.inc) : v]));
-const uid = () => auth.currentUser?.uid;
-const colRef = c => fs.collection(db, "users", uid(), c);
-const docRef = (c, id) => fs.doc(db, "users", uid(), c, id);
+const requireUid = () => {
+  const id = activeUid || auth.currentUser?.uid;
+  if (!id) throw Object.assign(new Error("Usuário sem uid"), { code: "permission-denied" });
+  return id;
+};
+const colRef = c => {
+  const id = requireUid();
+  return fs.collection(db, "users", id, c);
+};
+const docRef = (c, id) => fs.doc(db, "users", requireUid(), c, id);
 
 const DB = {
   sub: (c, cb) => {
     if (!logged()) return () => {};
-    return fs.onSnapshot(
-      colRef(c),
-      s => cb(s.docs.map(x => ({ id: x.id, ...x.data() }))),
-      e => dbFail(e)
-    );
+    try {
+      return fs.onSnapshot(
+        colRef(c),
+        s => cb(s.docs.map(x => ({ id: x.id, ...x.data() }))),
+        e => dbFail(e)
+      );
+    } catch (e) { dbFail(e); return () => {}; }
   },
   add: async (c, o) => {
     if (!(await needAuth())) return;
@@ -710,8 +735,10 @@ function render() {
   if (S.tab === "vender") ["ch","pay","cl"].forEach((i,n) => { if (keep[n]) $("#" + i).value = keep[n]; });
 }
 
-function gate(u) {
+async function gate(u) {
   user = u || null;
+  activeUid = u?.uid || null;
+  permAlerted = false;
   document.body.classList.remove("booting");
   closeNav();
   unsubs.forEach(f => f());
@@ -724,15 +751,24 @@ function gate(u) {
   document.body.classList.toggle("in", !!user);
   $("#login").hidden = !!user;
   $("#app").hidden = !user;
-  if (!user) {
+  if (!user || !activeUid) {
     $("#who").textContent = "";
     return;
   }
   $("#who").textContent = user.email || "";
+  try {
+    await fs.setDoc(fs.doc(db, "users", activeUid), {
+      email: user.email || "",
+      updatedAt: Date.now()
+    }, { merge: true });
+  } catch (e) {
+    dbFail(e);
+    return;
+  }
   for (const c of COLS) unsubs.push(DB.sub(c, l => { S[c] = l; render(); }));
 }
 
-Auth.on(gate);
+Auth.on(u => { gate(u); });
 </script>
 </body>
 </html>
