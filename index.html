@@ -2,335 +2,732 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Sublime - Gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--v:#b3124f;--bg:#f6f3f4;--bd:#ece5e8;--mut:#7d6b72;--ok:#1f9d55;--bad:#d62839;--arco:linear-gradient(90deg,#e0245e,#f57c00,#fbc02d,#2ebd59,#1fb2d6,#7c5cd6)}
+:root{
+  --v:#b3124f;--v2:#8e0e3f;--bg:#fcf7f8;--bd:#ece5e8;--mut:#7d6b72;--ink:#2b2024;--ok:#1f9d55;--bad:#d62839;
+  --arco:linear-gradient(90deg,#e0245e,#f57c00,#fbc02d,#2ebd59,#1fb2d6,#7c5cd6);
+  --glass:rgba(255,255,255,.62);--glass-bd:rgba(255,255,255,.88);
+  --side:252px;--top:58px;--rad:16px;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--safe-x:env(safe-area-inset-left,0px)
+}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(900px 500px at 5% -5%,#ffd3e2aa,transparent),radial-gradient(800px 520px at 100% 8%,#d8cbf7aa,transparent),radial-gradient(800px 500px at 55% 110%,#c4efdbaa,transparent),#fcf7f8;background-attachment:fixed;color:#2b2024;letter-spacing:.005em}
-.logo{font-size:1.9rem;font-weight:800;line-height:1;background:var(--arco);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{font-family:Georgia,serif;font-weight:bold;color:var(--v);font-size:.78rem}
-.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
-aside{background:rgba(255,255,255,.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,.8);padding:0 12px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
-aside::before{content:"";display:block;height:5px;background:var(--arco);margin:0 -12px 16px}
-.brand{padding:0 8px 16px}
-nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
-nav button{border:0;background:none;text-align:left;padding:10px 12px;border-radius:10px;font:inherit;font-weight:600;color:#5a4a50;cursor:pointer;white-space:nowrap}
-nav button:hover{background:#fbeef2}nav button.on{background:var(--v);color:#fff}
-main{padding:24px 28px 60px;max-width:1100px;width:100%}
-h2{margin:0 0 20px;font-family:Georgia,serif;font-weight:700;font-size:1.65rem;color:var(--v)}h3{margin:0 0 12px;font-family:Georgia,serif;font-size:1.05rem;color:#5a2a3c}.k{display:inline-block;width:26px;color:#c98aa3;font:700 .85rem ui-monospace,Menlo,monospace}nav button.on .k{color:#ffffffaa}
-.card{background:rgba(255,255,255,.58);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.85);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 6px 28px rgba(179,18,79,.07)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}.grid .card{margin:0}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
-.kpi b{display:block;font-size:1.55rem;color:var(--v)}.kpi span,.m{color:var(--mut);font-size:.85rem}
-button.p{background:var(--v);color:#fff;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
-button.s{background:rgba(251,238,242,.8);color:var(--v);border:0;border-radius:999px;padding:6px 10px;cursor:pointer;font:inherit;font-size:.85rem;font-weight:600}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;font:15px/1.45 Outfit,system-ui,sans-serif;color:var(--ink);letter-spacing:.01em;
+  background:
+    radial-gradient(900px 500px at 5% -5%,#ffd3e2aa,transparent),
+    radial-gradient(800px 520px at 100% 8%,#d8cbf7aa,transparent),
+    radial-gradient(800px 500px at 55% 110%,#c4efdbaa,transparent),
+    var(--bg);
+  background-attachment:fixed;min-height:100dvh
+}
+button,input,select{font:inherit;touch-action:manipulation}
+.logo{font-family:Fraunces,Georgia,serif;font-size:1.85rem;font-weight:700;line-height:1.05;background:var(--arco);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--v);font-size:.78rem;line-height:1.25}
+a{color:var(--v)}
+
+/* Login */
+#login{
+  width:min(380px,calc(100% - 32px));margin:max(48px,8vh) auto;text-align:center;padding:28px 24px 26px;
+  background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--glass-bd);border-radius:22px;box-shadow:0 18px 50px rgba(179,18,79,.1)
+}
+#login .logo{font-size:2.2rem;margin-bottom:4px}
+#login label{text-align:left}
+#login .p{margin-top:8px;min-height:44px}
+.err{color:var(--bad);font-size:.85rem;min-height:1.2em;margin:10px 0 4px}
+
+/* App shell — desktop default */
+.shell{display:grid;grid-template-columns:var(--side) 1fr;min-height:100dvh}
+.topbar{display:none}
+.scrim{display:none}
+.workspace{min-width:0;display:flex;flex-direction:column}
+aside{
+  background:rgba(255,255,255,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-right:1px solid var(--glass-bd);padding:0 12px 16px;position:sticky;top:0;height:100dvh;
+  display:flex;flex-direction:column;z-index:30
+}
+aside::before{content:"";display:block;height:5px;background:var(--arco);margin:0 -12px 14px;border-radius:0}
+.brand{padding:4px 8px 12px}
+.userbar{font-size:.72rem;color:var(--mut);padding:0 10px 12px;word-break:break-all;line-height:1.35}
+.side-foot{margin-top:auto;padding:10px 4px 4px;display:flex;flex-direction:column;gap:8px}
+nav{display:flex;flex-direction:column;gap:3px;flex:1;overflow:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+nav button{
+  border:0;background:none;text-align:left;padding:11px 12px;border-radius:12px;font-weight:600;color:#5a4a50;
+  cursor:pointer;display:flex;align-items:center;gap:10px;min-height:44px;transition:background .15s,color .15s,transform .12s
+}
+nav button .ico{width:1.35em;text-align:center;flex:0 0 auto}
+nav button .lbl{min-width:0;overflow:hidden;text-overflow:ellipsis}
+nav button:hover{background:#fbeef2}
+nav button.on{background:var(--v);color:#fff;box-shadow:0 8px 18px rgba(179,18,79,.22)}
+nav button:active{transform:scale(.98)}
+main{padding:28px 32px calc(48px + var(--safe-b));max-width:1180px;width:100%;margin:0 auto}
+h2{margin:0 0 18px;font-family:Fraunces,Georgia,serif;font-weight:700;font-size:clamp(1.35rem,2.2vw,1.75rem);color:var(--v)}
+h3{margin:0 0 12px;font-family:Fraunces,Georgia,serif;font-size:1.08rem;color:#5a2a3c;font-weight:700}
+
+.card{
+  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--glass-bd);border-radius:var(--rad);padding:18px 20px;margin-bottom:14px;
+  box-shadow:0 8px 28px rgba(179,18,79,.06)
+}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:14px}
+.grid .card{margin:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.kpi b{display:block;font-size:clamp(1.25rem,2vw,1.55rem);color:var(--v);font-weight:700;letter-spacing:-.02em}
+.kpi span,.m{color:var(--mut);font-size:.84rem}
+
+button.p{background:var(--v);color:#fff;border:0;border-radius:999px;padding:10px 18px;font-weight:600;cursor:pointer;min-height:42px}
+button.p:hover{background:var(--v2)}
+button.s{background:rgba(251,238,242,.9);color:var(--v);border:0;border-radius:999px;padding:7px 12px;cursor:pointer;font-size:.85rem;font-weight:600;min-height:34px}
 button.d{background:#fde8ea;color:var(--bad)}
-input,select{width:100%;padding:9px 11px;border:1px solid #e3d6db;border-radius:10px;font:inherit;background:rgba(255,255,255,.75)}
+button:disabled{opacity:.55;cursor:not-allowed}
+input,select{width:100%;padding:11px 12px;border:1px solid #e3d6db;border-radius:12px;background:rgba(255,255,255,.82);min-height:42px}
 input:focus,select:focus{outline:2px solid #e0245e55;border-color:var(--v)}
-label{display:block;font-size:.8rem;color:var(--mut);margin:10px 0 3px}
+label{display:block;font-size:.8rem;color:var(--mut);margin:10px 0 4px;font-weight:500}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
-td,th{padding:9px 8px;border-bottom:1px solid #f3ebee;text-align:left;vertical-align:top}th{color:var(--mut);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
-tr:last-child td{border-bottom:0}.tw{overflow-x:auto}.r{text-align:right}
-.tag{padding:2px 9px;border-radius:10px;font-size:.75rem;font-weight:700;white-space:nowrap}
+td,th{padding:10px 8px;border-bottom:1px solid #f3ebee;text-align:left;vertical-align:top}
+th{color:var(--mut);font-size:.7rem;text-transform:uppercase;letter-spacing:.045em;font-weight:700}
+tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.tag{padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:700;white-space:nowrap;display:inline-block}
 .low{background:#fde8ea;color:var(--bad)}.okt{background:#e3f6ea;color:#14753f}.warn{background:#fff3cd;color:#8a6100}.info{background:#e3effd;color:#1f5fb4}
-.prod{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.prod button{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.65);border-radius:12px;padding:12px;cursor:pointer;text-align:left;font:inherit}
-.prod button:hover{border-color:var(--v);background:#fff8fa}.prod b{display:block}.prod small{color:var(--mut)}
+.prod{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
+.prod button{border:1px solid var(--glass-bd);background:rgba(255,255,255,.7);border-radius:14px;padding:14px;cursor:pointer;text-align:left;min-height:88px;transition:border-color .15s,background .15s,transform .12s}
+.prod button:hover{border-color:var(--v);background:#fff8fa}.prod button:active{transform:scale(.98)}
+.prod b{display:block;margin-bottom:4px}.prod small{color:var(--mut);font-size:.78rem;line-height:1.35}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
-dialog{border:0;border-radius:20px;padding:24px;width:min(460px,94vw);max-height:90vh;overflow:auto;background:rgba(255,255,255,.9);backdrop-filter:blur(18px);box-shadow:0 20px 60px rgba(60,10,30,.25)}dialog::backdrop{background:#0006}
-#login{max-width:340px;margin:60px auto;text-align:center}.err{color:var(--bad);font-size:.85rem;min-height:1em}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.cal .h{font-size:.72rem;color:var(--mut);text-align:center;font-weight:700}
-.day{min-height:78px;border:1px solid var(--bd);border-radius:10px;padding:5px;background:rgba(255,255,255,.65);cursor:pointer;font-size:.7rem;overflow:hidden}
-.day:hover{border-color:#e0a3b9}.day.sel{border:2px solid var(--v)}.day.t{background:#fff5f8}.day b{font-size:.85rem}
-.chip{display:block;border-radius:6px;padding:1px 5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row.actions{gap:6px}
+dialog{border:0;border-radius:20px;padding:22px;width:min(460px,94vw);max-height:min(90vh,900px);overflow:auto;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);box-shadow:0 20px 60px rgba(60,10,30,.25)}
+dialog::backdrop{background:#0007}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .h{font-size:.72rem;color:var(--mut);text-align:center;font-weight:700;padding:2px 0}
+.day{min-height:84px;border:1px solid var(--bd);border-radius:12px;padding:6px;background:rgba(255,255,255,.7);cursor:pointer;font-size:.68rem;overflow:hidden;transition:border-color .12s,box-shadow .12s}
+.day:hover{border-color:#e0a3b9}.day.sel{border:2px solid var(--v);box-shadow:0 0 0 3px #b3124f22}.day.t{background:#fff5f8}.day b{font-size:.88rem;display:block;margin-bottom:2px}
+.chip{display:block;border-radius:6px;padding:2px 5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .c1{background:#e3f6ea;color:#14753f}.c2{background:#ece6fb;color:#5b3fb5}.c3{background:#f1eced;color:#6b5a60}.c4{background:#fde4ee;color:#b3124f}
 .up{color:var(--ok);font-weight:700}.dn{color:var(--bad);font-weight:700}
-a{color:var(--v)}
+.icon-btn{width:42px;height:42px;border:0;border-radius:12px;background:rgba(251,238,242,.95);color:var(--v);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
+.icon-btn svg{width:20px;height:20px;display:block}
+.topbar .brand-mini{display:flex;flex-direction:column;min-width:0}
+.topbar .brand-mini .logo{font-size:1.35rem}
+.topbar .brand-mini .sub{font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.page-head h2{margin-bottom:14px}
+
 body.booting #login,body.in #login{display:none!important}
 body:not(.in) #app{display:none!important}
-body.booting::after{content:"Carregando…";position:fixed;inset:0;display:grid;place-items:center;font:600 1rem system-ui,sans-serif;color:var(--mut);background:inherit;z-index:9}
-@media(max-width:820px){.shell{grid-template-columns:1fr}aside{position:static;height:auto;padding-bottom:6px}nav{flex-direction:row;flex-wrap:wrap}main{padding:16px}.day{min-height:56px}.chip{font-size:.6rem}}
+body.booting::after{content:"Conectando ao Firebase…";position:fixed;inset:0;display:grid;place-items:center;font:600 1rem Outfit,system-ui,sans-serif;color:var(--mut);background:inherit;z-index:9}
+
+/* Desktop wide */
+@media(min-width:1200px){
+  :root{--side:268px}
+  main{padding:32px 40px 64px;max-width:1280px}
+  .grid{gap:14px}
+}
+
+/* Tablet */
+@media(max-width:1024px) and (min-width:761px){
+  :root{--side:200px}
+  .shell{grid-template-columns:var(--side) 1fr}
+  aside{padding:0 8px 12px}
+  .brand .sub{font-size:.68rem}
+  nav button{padding:10px 10px;gap:8px;font-size:.92rem}
+  nav button .lbl{font-size:.9rem}
+  main{padding:22px 20px 48px}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .day{min-height:70px}
+  .prod{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+}
+
+/* Mobile */
+@media(max-width:760px){
+  .shell{grid-template-columns:1fr;padding-top:calc(var(--top) + var(--safe-t))}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    position:fixed;top:0;left:0;right:0;z-index:40;height:calc(var(--top) + var(--safe-t));
+    padding:var(--safe-t) 12px 0 max(12px,var(--safe-x));
+    background:rgba(255,255,255,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--glass-bd);box-shadow:0 4px 18px rgba(179,18,79,.06)
+  }
+  .scrim{display:block;position:fixed;inset:0;background:#1a0a12aa;opacity:0;pointer-events:none;transition:opacity .2s;z-index:45}
+  body.nav-open .scrim{opacity:1;pointer-events:auto}
+  body.nav-open{overflow:hidden}
+  aside{
+    position:fixed;top:0;left:0;bottom:0;width:min(300px,86vw);height:100dvh;transform:translateX(-105%);
+    transition:transform .22s ease;border-right:1px solid var(--glass-bd);box-shadow:none;padding-bottom:calc(16px + var(--safe-b))
+  }
+  body.nav-open aside{transform:translateX(0);box-shadow:18px 0 40px rgba(40,10,20,.2)}
+  main{padding:16px 14px calc(28px + var(--safe-b));max-width:none}
+  h2{font-size:1.35rem;margin-bottom:14px}
+  .card{padding:16px;border-radius:14px;margin-bottom:12px}
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .grid2{grid-template-columns:1fr;gap:12px}
+  .kpi b{font-size:1.25rem}
+  .prod{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .prod button{padding:12px;min-height:80px}
+  .day{min-height:54px;padding:4px;border-radius:8px}
+  .day b{font-size:.78rem}
+  .chip{font-size:.58rem;padding:1px 3px}
+  .cal{gap:4px}
+  .cal .h{font-size:.62rem}
+  table{font-size:.84rem}
+  td,th{padding:8px 6px}
+  #login{margin:max(28px,6vh) auto;padding:24px 18px}
+  dialog{width:min(460px,96vw);padding:18px;border-radius:18px;max-height:min(92dvh,900px)}
+  .row{gap:8px}
+  button.p,button.s{min-height:40px}
+  #cd{width:100%!important;max-width:none}
+  .tw{margin:0 -2px}
+  .side-foot .s{min-height:44px}
+}
+
+/* Very small phones */
+@media(max-width:380px){
+  .grid{grid-template-columns:1fr}
+  .prod{grid-template-columns:1fr 1fr}
+  .topbar .brand-mini .sub{display:none}
+}
 </style>
 </head>
 <body class="booting">
 <div id="login" class="card">
-  <div class="logo">Sublime</div><div class="sub">Casa de Pães, Biscoitos e Bolos</div>
-  <form id="lf"><label>E-mail</label><input id="em" type="email" required autocomplete="username">
-  <label>Senha</label><input id="pw" type="password" required autocomplete="current-password">
-  <p class="sub" id="dm" hidden>Modo demonstração<br><span style="font-weight:normal">e-mail: demo@sublime.com<br>senha: demo123</span></p>
-  <p class="err" id="le"></p><button class="p" style="width:100%">Entrar</button></form>
+  <div class="logo">Sublime</div>
+  <div class="sub">Casa de Pães, Biscoitos e Bolos</div>
+  <form id="lf">
+    <label>E-mail</label><input id="em" type="email" required autocomplete="username">
+    <label>Senha</label><input id="pw" type="password" required autocomplete="current-password">
+    <p class="err" id="le"></p>
+    <button class="p" style="width:100%">Entrar</button>
+  </form>
 </div>
 <div class="shell" id="app" hidden>
-  <aside><div class="brand"><div class="logo">Sublime</div><div class="sub">Casa de Pães, Biscoitos e Bolos</div></div>
-  <nav id="nav"></nav><button class="s" id="out">Sair</button></aside>
-  <div><div id="dm2" hidden style="background:#fff3cd;color:#7a5b00;padding:8px 28px;font-size:.8rem">Modo demonstração: os dados ficam só neste navegador. Configure o Firebase para uso real.</div><main id="main"></main></div>
+  <header class="topbar">
+    <button type="button" class="icon-btn" id="menu" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <div class="brand-mini"><div class="logo">Sublime</div><div class="sub">Casa de Pães, Biscoitos e Bolos</div></div>
+    <button type="button" class="icon-btn" id="outm" aria-label="Sair" title="Sair">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2"/><path d="M4 12h11"/><path d="m8 8-4 4 4 4"/></svg>
+    </button>
+  </header>
+  <div class="scrim" id="scrim"></div>
+  <aside id="side">
+    <div class="brand"><div class="logo">Sublime</div><div class="sub">Casa de Pães, Biscoitos e Bolos</div></div>
+    <div class="userbar" id="who"></div>
+    <nav id="nav"></nav>
+    <div class="side-foot"><button class="s" id="out" style="width:100%">Sair</button></div>
+  </aside>
+  <div class="workspace"><main id="main"></main></div>
 </div>
 <dialog id="dlg"></dialog>
 
 <script type="module">
-// >>> COLE AQUI SOMENTE apiKey E appId (Firebase > Configurações do projeto > Seus aplicativos) <<<
 const firebaseConfig = {
-  apiKey:"AIzaSyB5EhvwpfsZuLWPdCX_crQeVj7uioBBWII",
-  authDomain:"sublimeplanilhas-4bb2a.firebaseapp.com",
-  projectId:"sublimeplanilhas-4bb2a",
-  appId:"1:385701064574:web:2d15bc614128e327ec8d2f"
-};
-// Enquanto o Firebase não estiver configurado, roda em MODO DEMO (dados só neste navegador).
-const DEMO=firebaseConfig.apiKey==="COLE_AQUI";
-const COLS=["products","supplies","sales","clients","orders","moves"];
-let DB,Auth;
-if(DEMO){
-  const K="sublime_demo",U="sublime_demo_user",cbs=[];let ac=()=>{};
-  let st;try{st=JSON.parse(localStorage.getItem(K))}catch{}
-  st=st||{products:[
-    {id:"d1",code:"P001",rend:4,rec:[{id:"s1",q:1.2}],peso:"500 g",und:"un.",name:"Pão integral de moranga",cat:"Pão",price:16,stock:12,min:3,active:true},
-    {id:"d2",code:"P002",name:"Bolo de cenoura sem lactose",cat:"Bolo",price:28,stock:4,min:3,active:true},
-    {id:"d3",code:"P003",name:"Biscoito de aveia (pacote)",cat:"Biscoito",price:12,stock:20,min:5,active:true},
-    {id:"d4",code:"P004",name:"Cuca",cat:"Cuca",price:25,stock:2,min:3,active:true}],
-   supplies:[{id:"s1",code:"I001",name:"Farinha de arroz",qty:10,unit:"kg",min:3},{id:"s2",code:"I002",name:"Farinha de grão-de-bico",qty:1,unit:"kg",min:2},{id:"s3",code:"I003",name:"Amêndoas",qty:2,unit:"kg",min:1}]};
-  COLS.forEach(c=>st[c]=st[c]||[]);
-  const uid=()=>Math.random().toString(36).slice(2,10);
-  const patch=(d,o)=>{for(const k in o){const v=o[k];d[k]=v&&v.inc!==undefined?(d[k]||0)+v.inc:v}};
-  const run=p=>{if(p.t==="set")st[p.c].push({id:uid(),...p.o});else if(p.t==="upd"){const d=st[p.c].find(x=>x.id===p.id);d&&patch(d,p.o)}else st[p.c]=st[p.c].filter(x=>x.id!==p.id)};
-  const save=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch{}cbs.forEach(f=>f())};
-  DB={sub:(c,cb)=>{const f=()=>cb(st[c].map(x=>({...x})));cbs.push(f);f();return()=>{const i=cbs.indexOf(f);if(i>=0)cbs.splice(i,1)}},
-    add:async(c,o)=>{run({t:"set",c,o});save()},upd:async(c,id,o)=>{run({t:"upd",c,id,o});save()},
-    del:async(c,id)=>{run({t:"del",c,id});save()},batch:async ops=>{ops.forEach(run);save()}};
-  Auth={on:cb=>{ac=cb;let u=null;try{u=localStorage.getItem(U)}catch{}cb(u?{uid:"demo"}:null)},
-    login:async(e,p)=>{if(e.trim().toLowerCase()!=="demo@sublime.com"||p!=="demo123")throw 0;try{localStorage.setItem(U,"1")}catch{}ac({uid:"demo"})},
-    out:async()=>{try{localStorage.removeItem(U)}catch{}ac(null)}};
-}else{
-  const B="https://www.gstatic.com/firebasejs/10.12.2/";
-  const J="https://cdn.jsdelivr.net/npm/firebase@10.12.2/",imp=async n=>{try{return await import(B+"firebase-"+n+".js")}catch{return await import(J+n+"/+esm")}};
-  let initializeApp,au,fs;
-  try{({initializeApp}=await imp("app"));au=await imp("auth");fs=await imp("firestore")}
-  catch(e){document.body.classList.remove("booting");document.body.innerHTML='<p style="padding:30px;font-family:sans-serif;max-width:480px">Não foi possível carregar o Firebase. Isso costuma ser bloqueador de anúncios, extensão de privacidade ou rede que bloqueia o Google. Desative o bloqueador para este site ou tente outra rede e recarregue.</p>';throw e}
-  const app=initializeApp(firebaseConfig),a=au.getAuth(app),d=fs.getFirestore(app);
-  const cv=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v&&v.inc!==undefined?fs.increment(v.inc):v]));
-  const onErr=e=>{console.error("[Firestore]",e);if(e?.code==="permission-denied")alert("Sem permissão no Firestore. Nas regras, use: allow read, write: if request.auth != null;");};
-  DB={sub:(c,cb)=>fs.onSnapshot(fs.collection(d,c),s=>cb(s.docs.map(x=>({id:x.id,...x.data()}))),onErr),
-    add:(c,o)=>fs.addDoc(fs.collection(d,c),cv(o)),upd:(c,id,o)=>fs.updateDoc(fs.doc(d,c,id),cv(o)),
-    del:(c,id)=>fs.deleteDoc(fs.doc(d,c,id)),
-    batch:async ops=>{const b=fs.writeBatch(d);ops.forEach(p=>p.t==="set"?b.set(fs.doc(fs.collection(d,p.c)),cv(p.o)):p.t==="upd"?b.update(fs.doc(d,p.c,p.id),cv(p.o)):b.delete(fs.doc(d,p.c,p.id)));await b.commit()}};
-  Auth={on:cb=>au.onAuthStateChanged(a,cb),login:(e,p)=>au.signInWithEmailAndPassword(a,e.trim(),p),out:()=>au.signOut(a)};
-}
-
-const pad=n=>String(n).padStart(2,"0");
-const dk=t=>{const d=new Date(t);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
-const ym=t=>dk(t).slice(0,7);
-const fd=d=>d?d.split("-").reverse().join("/"):"";
-const S={products:[],supplies:[],sales:[],clients:[],orders:[],moves:[],cart:[],tab:"painel",month:ym(Date.now()),day:"",mk:"todos"};
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const R=v=>(+v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-const D=t=>new Date(t).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
-const H=t=>new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-const TABS={painel:"📊 Painel",vender:"🛒 Vender",calendario:"📅 Calendário",encomendas:"🎂 Encomendas",clientes:"👥 Clientes",produtos:"🥖 Produtos",insumos:"📦 Insumos",movimentos:"🔁 Movimentações",vendas:"🧾 Vendas"};
-const STS=["Pendente","Em produção","Pronto","Entregue","Cancelada"],STC={Pendente:"warn","Em produção":"info",Pronto:"okt",Entregue:"okt",Cancelada:"low"};
-let unsubs=[];
-
-$("#nav").innerHTML=Object.entries(TABS).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join("");
-$("#nav").onclick=e=>{if(!document.body.classList.contains("in"))return;const t=e.target.closest("button")?.dataset.t;if(t){S.tab=t;render()}};
-$("#out").onclick=()=>Auth.out();
-if(DEMO){$("#dm").hidden=false;$("#dm2").hidden=false}
-$("#lf").onsubmit=async e=>{e.preventDefault();$("#le").textContent="";const btn=e.target.querySelector("button");btn.disabled=true;
-  try{await Auth.login($("#em").value,$("#pw").value)}catch(err){$("#le").textContent=err?.code==="auth/too-many-requests"?"Muitas tentativas. Aguarde e tente de novo.":err?.code==="auth/network-request-failed"?"Falha de rede ao conectar no Firebase.":"E-mail ou senha incorretos."}
-  finally{btn.disabled=false}};
-
-function form(title,fields,save){
-  const d=$("#dlg");
-  d.innerHTML=`<h3>${esc(title)}</h3><form>${fields.map(f=>`<label>${f.l}</label>`+
-   (f.o?`<select name="${f.k}">${f.o.map(o=>`<option ${o==f.v?"selected":""}>${esc(o)}</option>`).join("")}</select>`
-   :`${f.u?'<div style="display:flex;gap:6px">':""}<input name="${f.k}" type="${f.t||"text"}" step="any" value="${esc(f.v??"")}" ${f.req===false?"":"required"}>${f.u?`<select name="${f.k}_u" style="width:96px">${f.u.map(x=>`<option ${x==f.uv?"selected":""}>${esc(x)}</option>`).join("")}</select></div>`:""}`)).join("")}
-   <div class="row" style="margin-top:16px"><button type="button" class="s" id="cx">Cancelar</button><button class="p">Salvar</button></div></form>`;
-  d.showModal();$("#cx").onclick=()=>d.close();
-  d.querySelector("form").onsubmit=async e=>{e.preventDefault();
-    const o=Object.fromEntries(new FormData(e.target));
-    for(const f of fields)if(f.t==="number")o[f.k]=+o[f.k]||0;
-    if(await save(o)===false)return;d.close()};
-}
-const UB={g:["m",1],kg:["m",1000],ml:["v",1],L:["v",1000],"un.":["u",1]};
-const FAM=u=>({m:["g","kg"],v:["ml","L"],u:["un."]}[(UB[u]||["u"])[0]]);
-const conv=(q,a,b)=>UB[a]&&UB[b]&&UB[a][0]===UB[b][0]?q*UB[a][1]/UB[b][1]:q;
-const nm=p=>(p.code?p.code+" - ":"")+p.name;
-const uu=p=>p.und||"un.";
-const mvo=(kind,id,name,d,why,unit)=>({ts:Date.now(),kind,id,name,d,why,unit});
-const MV=(kind,id,name,d,why,unit)=>({t:"set",c:"moves",o:mvo(kind,id,name,d,why,unit)});
-
-window.A={
-  prod:id=>{const p=S.products.find(x=>x.id===id)||{};
-    form(id?"Editar produto":"Novo produto",[
-      {k:"code",l:"Código (único)",v:p.code||"P"+String(S.products.length+1).padStart(3,"0")},
-      {k:"name",l:"Nome (ex.: Biscoito de milho)",v:p.name},{k:"cat",l:"Categoria (pão, bolo, biscoito...)",v:p.cat,req:false},
-      {k:"peso",l:"Peso / tamanho (ex.: 500 g)",v:p.peso,req:false},
-      {k:"und",l:"Unidade de venda",o:["un.","pacote","caixa","fatia","kg"],v:p.und||"un."},
-      {k:"desc",l:"Detalhes (ex.: pacote com 10 biscoitos)",v:p.desc,req:false},
-      {k:"price",l:"Preço de venda (R$)",t:"number",v:p.price},
-      ...(id?[]:[{k:"stock",l:"Estoque inicial",t:"number",v:0}]),
-      {k:"min",l:"Avisar quando estoque ≤",t:"number",v:p.min??3},
-      {k:"active",l:"À venda?",o:["Sim","Não"],v:p.active===false?"Não":"Sim"}],
-      o=>{o.code=o.code.trim().toUpperCase();o.active=o.active==="Sim";
-        if(S.products.some(x=>x.code===o.code&&x.id!==id))return alert("Já existe um produto com esse código."),false;
-        if(id)return DB.upd("products",id,o);
-        return DB.batch([{t:"set",c:"products",o},...(o.stock>0?[MV("produto","",o.code+" - "+o.name,o.stock,"Estoque inicial",o.und)]:[])])})},
-  rec:id=>{const p=S.products.find(x=>x.id===id),r=p.rec||[];
-    if(!S.supplies.length)return alert("Cadastre os insumos primeiro.");
-    form("Receita: "+nm(p),[{k:"rend",l:"Rendimento: quantas unidades de venda a receita produz",t:"number",v:p.rend||1},
-      ...S.supplies.map(x=>{const y=r.find(z=>z.id===x.id)||{};return{k:"s_"+x.id,l:`${esc(nm(x))} (quantidade por receita)`,t:"number",req:false,v:y.q||"",u:FAM(x.unit),uv:y.u||(x.unit==="kg"?"g":x.unit==="L"?"ml":x.unit)}})],
-      o=>DB.upd("products",id,{rend:o.rend||1,rec:S.supplies.map(x=>({id:x.id,q:o["s_"+x.id],u:o["s_"+x.id+"_u"]||x.unit})).filter(x=>x.q>0)}))},
-  sup:id=>{const p=S.supplies.find(x=>x.id===id)||{};
-    form(id?"Editar insumo":"Novo insumo",[
-      {k:"code",l:"Código (único)",v:p.code||"I"+String(S.supplies.length+1).padStart(3,"0")},
-      {k:"name",l:"Nome (ex.: farinha de arroz)",v:p.name},
-      ...(id?[]:[{k:"qty",l:"Quantidade inicial",t:"number",v:0}]),
-      {k:"unit",l:"Unidade",o:["kg","g","L","ml","un."],v:p.unit||"kg"},{k:"min",l:"Avisar quando ≤",t:"number",v:p.min??1}],
-      o=>{o.code=o.code.trim().toUpperCase();
-        if(S.supplies.some(x=>x.code===o.code&&x.id!==id))return alert("Já existe um insumo com esse código."),false;
-        if(id)return DB.upd("supplies",id,o);
-        return DB.batch([{t:"set",c:"supplies",o},...(o.qty>0?[MV("insumo","",o.code+" - "+o.name,o.qty,"Estoque inicial",o.unit)]:[])])})},
-  adj:(c,id)=>{const p=S[c].find(x=>x.id===id),pr=c==="products",f=pr?"stock":"qty",u=pr?uu(p):p.unit,rec=pr&&p.rec&&p.rec.length;
-    form("Movimentar: "+nm(p),[{k:"tipo",l:"Tipo",o:["Entrada","Saída"]},{k:"q",l:pr?"Quantidade ("+u+")":"Quantidade",t:"number",v:"",...(pr?{}:{u:FAM(u),uv:u})},
-      {k:"why",l:"Motivo"+(rec?" (Produção baixa os insumos da receita)":""),o:["Produção","Compra","Uso na produção","Perda / vencimento","Ajuste de inventário","Outro"]}],
-      async o=>{if(!(o.q>0))return alert("Informe uma quantidade maior que zero."),false;
-        if(!pr)o.q=+conv(o.q,o.q_u||u,u).toFixed(4);const d=o.tipo==="Entrada"?o.q:-o.q,ops=[{t:"upd",c,id,o:{[f]:{inc:d}}},MV(pr?"produto":"insumo",id,nm(p),d,o.why,u)];
-        if(rec&&d>0&&o.why==="Produção"){
-          const us=p.rec.map(r=>{const s=S.supplies.find(x=>x.id===r.id);return{s,u:s?+conv(r.q*o.q/(p.rend||1),r.u||s.unit,s.unit).toFixed(4):0}}).filter(x=>x.s),
-          short=us.filter(x=>x.s.qty<x.u).map(x=>x.s.name);
-          if(short.length&&!confirm("Insumo(s) insuficiente(s): "+short.join(", ")+". Continuar mesmo assim?"))return false;
-          us.forEach(x=>ops.push({t:"upd",c:"supplies",id:x.s.id,o:{qty:{inc:-x.u}}},MV("insumo",x.s.id,nm(x.s),-x.u,"Produção de "+p.name,x.s.unit)))}
-        await DB.batch(ops)})},
-  cli:id=>{const p=S.clients.find(x=>x.id===id)||{};
-    form(id?"Editar cliente":"Novo cliente",[{k:"name",l:"Nome",v:p.name},{k:"phone",l:"WhatsApp / telefone",v:p.phone,req:false},{k:"nasc",l:"Data de nascimento (aniversário)",t:"date",v:p.nasc,req:false},
-      {k:"restr",l:"Restrições alimentares (celíaco, sem lactose...)",v:p.restr,req:false},{k:"addr",l:"Endereço / bairro",v:p.addr,req:false},{k:"obs",l:"Observações",v:p.obs,req:false}],
-      o=>id?DB.upd("clients",id,o):DB.add("clients",o))},
-  ord:id=>{const p=S.orders.find(x=>x.id===id)||{};
-    form(id?"Editar encomenda":"Nova encomenda",[{k:"client",l:"Cliente",o:["Avulso",...S.clients.map(c=>c.name)],v:p.client},
-      {k:"desc",l:"O que foi pedido",v:p.desc},{k:"date",l:"Data de entrega",t:"date",v:p.date||dk(Date.now())},
-      {k:"val",l:"Valor total (R$)",t:"number",v:p.val},{k:"sinal",l:"Sinal já pago (R$)",t:"number",v:p.sinal??0},{k:"status",l:"Status",o:STS,v:p.status||"Pendente"}],
-      o=>id?DB.upd("orders",id,o):DB.add("orders",o))},
-  next:id=>{const o=S.orders.find(x=>x.id===id),i=STS.indexOf(o.status);if(i<3)DB.upd("orders",id,{status:STS[i+1]})},
-  del:async(c,id)=>{if(confirm("Excluir este item?"))await DB.del(c,id)},
-  add:id=>{const p=S.products.find(x=>x.id===id),i=S.cart.find(x=>x.id===id);
-    if((i?i.q:0)+1>p.stock)return alert("Sem estoque suficiente.");
-    i?i.q++:S.cart.push({id,name:nm(p),price:p.price,q:1});render()},
-  qty:(id,n)=>{const i=S.cart.find(x=>x.id===id);i.q+=n;
-    if(i.q<=0)S.cart=S.cart.filter(x=>x!==i);
-    else if(i.q>S.products.find(x=>x.id===id).stock){i.q--;alert("Sem estoque suficiente.")}render()},
-  sell:async()=>{if(!S.cart.length)return;
-    const total=S.cart.reduce((a,i)=>a+i.price*i.q,0);
-    await DB.batch([{t:"set",c:"sales",o:{ts:Date.now(),items:S.cart.map(i=>({...i})),total,pay:$("#pay").value,ch:$("#ch").value,client:$("#cl").value.trim()}},
-      ...S.cart.map(i=>({t:"upd",c:"products",id:i.id,o:{stock:{inc:-i.q}}})),...S.cart.map(i=>MV("produto",i.id,i.name,-i.q,"Venda","un."))]);
-    S.cart=[];render();alert("Venda registrada! "+R(total))},
-  cancel:async id=>{if(!confirm("Cancelar venda e devolver itens ao estoque?"))return;
-    const s=S.sales.find(x=>x.id===id),its=s.items.filter(i=>S.products.some(p=>p.id===i.id));
-    await DB.batch([...its.map(i=>({t:"upd",c:"products",id:i.id,o:{stock:{inc:i.q}}})),...its.map(i=>MV("produto",i.id,i.name,i.q,"Venda cancelada","un.")),{t:"del",c:"sales",id}])},
-  month:v=>{if(v){S.month=v;S.day="";render()}},
-  nav:n=>{const[y,m]=S.month.split("-").map(Number),d=new Date(y,m-1+n,1);S.month=d.getFullYear()+"-"+pad(d.getMonth()+1);S.day="";render()},
-  day:k=>{S.day=k;render()},
-  mk:v=>{S.mk=v;render()},
-  code:v=>{const p=S.products.find(x=>x.code===v.trim().toUpperCase());if(!p||p.active===false)return alert("Código não encontrado.");A.add(p.id)},
-  csv:()=>{const rows=[["Data","Cliente","Canal","Pagamento","Itens","Total"],...monthSales().map(s=>[D(s.ts),s.client||"",s.ch,s.pay,s.items.map(i=>i.q+"x "+i.name).join("; "),s.total])];
-    const t=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
-    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+t],{type:"text/csv"}));a.download=`vendas-${S.month}.csv`;a.click()}
+  apiKey: "AIzaSyB5EhvwpfsZuLWPdCX_crQeVj7uioBBWII",
+  authDomain: "sublimeplanilhas-4bb2a.firebaseapp.com",
+  projectId: "sublimeplanilhas-4bb2a",
+  appId: "1:385701064574:web:2d15bc614128e327ec8d2f"
 };
 
-const monthSales=()=>S.sales.filter(s=>ym(s.ts)===S.month).sort((a,b)=>b.ts-a.ts);
-const sum=a=>a.reduce((x,s)=>x+s.total,0);
-const stockTag=(q,m)=>`<span class="tag ${q<=m?"low":"okt"}">${q<=m?"baixo":"ok"}</span>`;
-const K=(v,l)=>`<div class="card kpi"><b>${v}</b><span>${l}</span></div>`;
-const T=(h,rows)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</table></div>`;
-const Bt=(l,f,c="")=>`<button class="s ${c}" onclick="${f}">${l}</button>`;
-const empty=t=>`<p class="m">${t}</p>`;
-const mvTxt=x=>`<span class="${x.d>0?"up":"dn"}">${x.d>0?"+":""}${x.d} ${esc(x.unit)}</span>`;
-const mvRows=l=>l.sort((a,b)=>b.ts-a.ts).map(x=>[D(x.ts),x.kind==="produto"?"Produto":"Insumo",esc(x.name),mvTxt(x),esc(x.why)]);
-const mvHead=["Data","Tipo","Item","Movimento","Motivo"];
-const orderRows=l=>l.map(o=>[fd(o.date),esc(o.client),esc(o.desc),R(o.val),R(Math.max(0,o.val-o.sinal)),`<span class="tag ${STC[o.status]}">${o.status}</span>`]);
-const open=()=>S.orders.filter(o=>o.status!=="Entregue"&&o.status!=="Cancelada");
-const mlabel=()=>{const[y,m]=S.month.split("-").map(Number);return new Date(y,m-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"})};
-
-const nextBd=n=>{const t=new Date();t.setHours(0,0,0,0);const[,m,d]=n.split("-").map(Number);let x=new Date(t.getFullYear(),m-1,d);if(x<t)x=new Date(t.getFullYear()+1,m-1,d);return Math.round((x-t)/864e5)};
-const bd=n=>{const[,m,d]=n.split("-"),k=nextBd(n);return d+"/"+m+(k===0?' <span class="tag warn">hoje</span>':k<=7?` <span class="tag info">em ${k}d</span>`:"")};
-const V={
-painel(){
-  const t=new Date().toDateString(),hoje=S.sales.filter(s=>new Date(s.ts).toDateString()===t),mes=monthSales(),
-  lp=S.products.filter(p=>p.stock<=p.min),ls=S.supplies.filter(p=>p.qty<=p.min),op=open().sort((a,b)=>a.date>b.date?1:-1);
-  return `<div class="grid">${K(R(sum(hoje)),"Vendas hoje ("+hoje.length+")")}${K(R(sum(mes)),"Vendas no mês ("+mes.length+")")}${K(op.length,"Encomendas em aberto")}${K(lp.length+ls.length,"Itens com estoque baixo")}</div>
-  <div class="grid2"><div class="card"><h3>🥖 Produtos com estoque baixo</h3>${lp.length?T(["Produto","Estoque","Mínimo"],lp.map(p=>[esc(nm(p)),`<span class="tag low">${p.stock} ${esc(uu(p))}</span>`,p.min+" "+esc(uu(p))])):empty("Nenhum produto em falta 🎉")}</div>
-  <div class="card"><h3>📦 Insumos com estoque baixo</h3>${ls.length?T(["Insumo","Estoque","Mínimo"],ls.map(p=>[esc(nm(p)),`<span class="tag low">${p.qty} ${esc(p.unit)}</span>`,p.min+" "+esc(p.unit)])):empty("Nenhum insumo em falta 🎉")}</div></div>
-  <div class="card"><h3>🎂 Próximas encomendas</h3>${op.length?T(["Entrega","Cliente","Pedido","Valor","A receber","Status"],orderRows(op.slice(0,6))):empty("Nenhuma encomenda em aberto.")}</div>`},
-vender(){
-  const ps=S.products.filter(p=>p.active!==false&&p.stock>0),tot=S.cart.reduce((a,i)=>a+i.price*i.q,0);
-  return `<div class="card"><div class="row"><h3 style="margin:0">Toque no produto ou digite o código</h3><input id="cd" placeholder="Código + Enter" style="width:170px" onkeydown="if(event.key==='Enter'){A.code(this.value)}"></div><div class="prod">${ps.map(p=>`<button onclick="A.add('${p.id}')"><b>${esc(p.name)}</b><small>${esc(p.code)} • ${R(p.price)} • ${p.stock} ${esc(uu(p))}</small></button>`).join("")||empty("Cadastre produtos e estoque primeiro.")}</div></div>
-  <div class="card"><h3>Carrinho</h3>${T(["Produto","Qtd","Subtotal"],S.cart.map(i=>[esc(i.name),`<button class="s" onclick="A.qty('${i.id}',-1)">−</button> ${i.q} <button class="s" onclick="A.qty('${i.id}',1)">+</button>`,R(i.price*i.q)]))}
-  <div class="grid" style="margin-top:12px"><div><label>Canal</label><select id="ch"><option>WhatsApp</option><option>Em casa</option><option>Feira</option><option>Encomenda</option></select></div>
-  <div><label>Pagamento</label><select id="pay"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Fiado</option></select></div>
-  <div><label>Cliente (opcional)</label><input id="cl" list="cls"><datalist id="cls">${S.clients.map(c=>`<option value="${esc(c.name)}">`).join("")}</datalist></div></div>
-  <div class="row" style="margin-top:12px"><h2 style="margin:0">${R(tot)}</h2><button class="p" onclick="A.sell()">Finalizar venda</button></div></div>`},
-calendario(){
-  const[y,m]=S.month.split("-").map(Number),first=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),tk=dk(Date.now());
-  const ms=monthSales(),mo=S.orders.filter(o=>(o.date||"").slice(0,7)===S.month),mm=S.moves.filter(x=>ym(x.ts)===S.month);
-  if(!S.day||S.day.slice(0,7)!==S.month)S.day=tk.slice(0,7)===S.month?tk:S.month+"-01";
-  let cells="<div></div>".repeat(first);
-  for(let i=1;i<=n;i++){const k=S.month+"-"+pad(i),vs=ms.filter(s=>dk(s.ts)===k),os=mo.filter(o=>o.date===k),mv=mm.filter(x=>dk(x.ts)===k),bs=S.clients.filter(c=>c.nasc&&c.nasc.slice(5)===k.slice(5));
-    cells+=`<div class="day${k===S.day?" sel":""}${k===tk?" t":""}" onclick="A.day('${k}')"><b>${i}</b>${vs.length?`<span class="chip c1">${R(sum(vs))}</span>`:""}${os.length?`<span class="chip c2">${os.length} encomenda${os.length>1?"s":""}</span>`:""}${mv.length?`<span class="chip c3">${mv.length} mov.</span>`:""}${bs.length?`<span class="chip c4">${bs.length>1?bs.length+" aniversários":"Aniv. "+esc(bs[0].name)}</span>`:""}</div>`}
-  const top={},ch={};ms.forEach(s=>{ch[s.ch]=(ch[s.ch]||0)+s.total;s.items.forEach(i=>top[i.name]=(top[i.name]||0)+i.q)});
-  const tp=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,5),pm=mm.filter(x=>x.kind==="produto"),im=mm.filter(x=>x.kind==="insumo");
-  const dv=S.sales.filter(s=>dk(s.ts)===S.day),dO=S.orders.filter(o=>o.date===S.day),dM=S.moves.filter(x=>dk(x.ts)===S.day),dB=S.clients.filter(c=>c.nasc&&c.nasc.slice(5)===S.day.slice(5));
-  return `<div class="row"><button class="s" onclick="A.nav(-1)">◀</button><h3 style="margin:0;text-transform:capitalize">${mlabel()}</h3><button class="s" onclick="A.nav(1)">▶</button></div>
-  <div class="grid">${K(R(sum(ms)),"Vendas ("+ms.length+")")}${K(R(ms.length?sum(ms)/ms.length:0),"Ticket médio")}${K(mo.length+" • "+R(mo.reduce((a,o)=>a+o.val,0)),"Encomendas no mês")}
-  ${K(mo.filter(o=>o.status==="Entregue").length,"Encomendas entregues")}${K(pm.filter(x=>x.d>0).reduce((a,x)=>a+x.d,0)+" / "+-pm.filter(x=>x.d<0).reduce((a,x)=>a+x.d,0)+" un.","Produtos: entradas / saídas")}${K(im.filter(x=>x.d>0).length+" / "+im.filter(x=>x.d<0).length,"Insumos: nº entradas / saídas")}</div>
-  <div class="grid2"><div class="card"><h3>🏆 Mais vendidos</h3>${tp.length?T(["Produto","Un."],tp.map(([a,b])=>[esc(a),b])):empty("Sem vendas no mês.")}</div>
-  <div class="card"><h3>📍 Por canal</h3>${Object.keys(ch).length?T(["Canal","Total"],Object.entries(ch).map(([a,b])=>[esc(a),R(b)])):empty("Sem vendas no mês.")}</div></div>
-  <div class="card"><div class="cal">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].map(d=>`<div class="h">${d}</div>`).join("")}${cells}</div>
-  <p class="m"><span class="tag okt">vendas</span> <span class="tag" style="background:#ece6fb;color:#5b3fb5">entregas</span> <span class="tag" style="background:#f1eced">movimentações</span> <span class="tag" style="background:#fde4ee;color:#b3124f">aniversários</span> - toque num dia para ver o registro.</p></div>
-  <div class="card"><h3>Registro de ${fd(S.day)}</h3>
-  ${dB.length?`<p><b>Aniversariantes</b></p>`+T(["Cliente","Contato","Restrições"],dB.map(c=>[esc(c.name),esc(c.phone),esc(c.restr)])):""}
-  <p><b>Vendas</b> ${dv.length?"- "+R(sum(dv)):""}</p>${dv.length?T(["Hora","Itens","Canal","Pgto","Total"],dv.map(s=>[H(s.ts),s.items.map(i=>`${i.q}x ${esc(i.name)}`).join(", ")+(s.client?` <small>(${esc(s.client)})</small>`:""),esc(s.ch),esc(s.pay),R(s.total)])):empty("Sem vendas neste dia.")}
-  <p><b>Encomendas para entrega</b></p>${dO.length?T(["Cliente","Pedido","Valor","A receber","Status"],dO.map(o=>[esc(o.client),esc(o.desc),R(o.val),R(Math.max(0,o.val-o.sinal)),`<span class="tag ${STC[o.status]}">${o.status}</span>`])):empty("Nenhuma entrega neste dia.")}
-  <p><b>Movimentações de estoque</b></p>${dM.length?T(mvHead,mvRows([...dM])):empty("Sem movimentações neste dia.")}</div>`},
-encomendas(){const l=[...S.orders].sort((a,b)=>(open().includes(a)?0:1)-(open().includes(b)?0:1)||(a.date>b.date?1:-1));
-  return `<div class="card"><div class="row"><h3>Encomendas</h3><button class="p" onclick="A.ord()">+ Nova encomenda</button></div>${l.length?T(["Entrega","Cliente","Pedido","Valor","A receber","Status",""],l.map(o=>[...orderRows([o])[0],
-  (["Entregue","Cancelada","Pronto"].includes(o.status)&&o.status!=="Pronto"?"":Bt(o.status==="Pronto"?"✓ Entregue":"Avançar","A.next('"+o.id+"')"))+" "+Bt("Editar","A.ord('"+o.id+"')")+" "+Bt("✕","A.del('orders','"+o.id+"')","d")])):empty("Nenhuma encomenda cadastrada.")}</div>`},
-clientes(){return `<div class="card"><div class="row"><h3>Clientes</h3><button class="p" onclick="A.cli()">+ Novo cliente</button></div>${S.clients.length?T(["Cliente","Contato","Aniversário","Restrições","Compras","Total gasto",""],
-  [...S.clients].sort((a,b)=>a.name.localeCompare(b.name)).map(c=>{const vs=S.sales.filter(s=>s.client===c.name),dg=(c.phone||"").replace(/\D/g,"");
-  return [`<b>${esc(c.name)}</b>${c.addr?`<br><small class="m">${esc(c.addr)}</small>`:""}`,dg?`<a href="https://wa.me/55${dg}" target="_blank" rel="noopener">${esc(c.phone)}</a>`:"",c.nasc?bd(c.nasc):"",esc(c.restr),vs.length,R(sum(vs)),Bt("Editar","A.cli('"+c.id+"')")+" "+Bt("✕","A.del('clients','"+c.id+"')","d")]})):empty("Nenhum cliente cadastrado.")}</div>`},
-produtos(){return `<div class="card"><div class="row"><h3>Produtos</h3><button class="p" onclick="A.prod()">+ Novo produto</button></div>${T(["Código","Produto","Preço","Estoque","Receita",""],
-  [...S.products].sort((a,b)=>(a.code||"").localeCompare(b.code||"")).map(p=>[`<b>${esc(p.code)}</b>`,esc(p.name)+(p.active===false?" <small class=m>(fora de venda)</small>":"")+`<br><small class="m">${[p.cat,p.peso,p.desc].filter(Boolean).map(x=>esc(x)).join(" - ")}</small>`,R(p.price),p.stock+" "+esc(uu(p))+" "+stockTag(p.stock,p.min),
-  p.rec&&p.rec.length?p.rec.length+" insumo(s) - rende "+(p.rend||1):'<span class="m">sem receita</span>',
-  Bt("± estoque","A.adj('products','"+p.id+"')")+" "+Bt("Receita","A.rec('"+p.id+"')")+" "+Bt("Editar","A.prod('"+p.id+"')")+" "+Bt("✕","A.del('products','"+p.id+"')","d")]))}</div>`},
-insumos(){return `<div class="card"><div class="row"><h3>Insumos (farinhas, castanhas, etc.)</h3><button class="p" onclick="A.sup()">+ Novo insumo</button></div>${T(["Código","Insumo","Quantidade",""],
-  [...S.supplies].sort((a,b)=>(a.code||"").localeCompare(b.code||"")).map(p=>[`<b>${esc(p.code)}</b>`,esc(p.name),p.qty+" "+esc(p.unit)+" "+stockTag(p.qty,p.min),
-  Bt("± estoque","A.adj('supplies','"+p.id+"')")+" "+Bt("Editar","A.sup('"+p.id+"')")+" "+Bt("✕","A.del('supplies','"+p.id+"')","d")]))}</div>`},
-movimentos(){const l=S.moves.filter(x=>ym(x.ts)===S.month&&(S.mk==="todos"||x.kind===S.mk));
-  return `<div class="card"><div class="row"><h3>Entradas e saídas de estoque</h3><div class="row" style="margin:0"><input type="month" value="${S.month}" onchange="A.month(this.value)" style="width:auto">
-  <select onchange="A.mk(this.value)" style="width:auto">${["todos","produto","insumo"].map(k=>`<option value="${k}" ${k===S.mk?"selected":""}>${k==="todos"?"Todos":k==="produto"?"Produtos":"Insumos"}</option>`).join("")}</select></div></div>
-  ${l.length?T(mvHead,mvRows(l)):empty("Nenhuma movimentação neste mês.")}</div>`},
-vendas(){const m=monthSales();return `<div class="card"><div class="row"><h3>Vendas</h3><div class="row" style="margin:0"><input type="month" value="${S.month}" onchange="A.month(this.value)" style="width:auto"><button class="s" onclick="A.csv()">⬇ CSV</button></div></div>
-  <p><b>${R(sum(m))}</b> em ${m.length} vendas</p>${T(["Data","Itens","Canal","Pgto","Total",""],m.map(s=>[D(s.ts),s.items.map(i=>`${i.q}x ${esc(i.name)}`).join(", ")+(s.client?`<br><small class="m">${esc(s.client)}</small>`:""),esc(s.ch),esc(s.pay),R(s.total),Bt("Cancelar","A.cancel('"+s.id+"')","d")]))}</div>`}
+const COLS = ["products","supplies","sales","clients","orders","moves"];
+const B = "https://www.gstatic.com/firebasejs/10.12.2/";
+const J = "https://cdn.jsdelivr.net/npm/firebase@10.12.2/";
+const imp = async n => {
+  try { return await import(B + "firebase-" + n + ".js"); }
+  catch { return await import(J + n + "/+esm"); }
 };
-function render(){
-  if(!document.body.classList.contains("in"))return;
-  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===S.tab));
-  const keep=["ch","pay","cl"].map(i=>$("#"+i)?.value);
-  $("#main").innerHTML=`<h2>${TABS[S.tab]}</h2>`+V[S.tab]();
-  if(S.tab==="vender")["ch","pay","cl"].forEach((i,n)=>{if(keep[n])$("#"+i).value=keep[n]});
-}
-function gate(u){
+
+let initializeApp, au, fs;
+try {
+  ({ initializeApp } = await imp("app"));
+  au = await imp("auth");
+  fs = await imp("firestore");
+} catch (e) {
   document.body.classList.remove("booting");
-  document.body.classList.toggle("in",!!u);
-  $("#login").hidden=!!u;
-  $("#app").hidden=!u;
-  unsubs.forEach(f=>f());unsubs=[];
-  if(!u){
-    S.cart=[];S.tab="painel";
-    COLS.forEach(c=>S[c]=[]);
-    $("#main").innerHTML="";
-    const d=$("#dlg");if(d.open)d.close();
+  document.body.innerHTML = '<p style="padding:30px;font-family:sans-serif;max-width:480px">Não foi possível carregar o Firebase. Desative bloqueador de anúncios/privacidade neste site ou use outra rede e recarregue.</p>';
+  throw e;
+}
+
+const app = initializeApp(firebaseConfig);
+const auth = au.getAuth(app);
+const db = fs.getFirestore(app);
+let user = null;
+
+const $=s=>document.querySelector(s);
+const logged = () => !!(user && auth.currentUser);
+const authMsg = code => ({
+  "auth/invalid-credential": "E-mail ou senha incorretos.",
+  "auth/wrong-password": "E-mail ou senha incorretos.",
+  "auth/user-not-found": "E-mail ou senha incorretos.",
+  "auth/invalid-email": "E-mail inválido.",
+  "auth/too-many-requests": "Muitas tentativas. Aguarde e tente de novo.",
+  "auth/network-request-failed": "Falha de rede ao conectar no Firebase.",
+  "auth/user-disabled": "Esta conta está desativada.",
+  "permission-denied": "Sem permissão no Firestore (é preciso estar logado)."
+}[code] || "Não foi possível concluir. Tente de novo.");
+
+async function needAuth() {
+  if (logged()) return true;
+  alert(authMsg("permission-denied"));
+  await au.signOut(auth);
+  return false;
+}
+
+function dbFail(e) {
+  console.error("[Firestore]", e);
+  const msg = authMsg(e?.code);
+  if (e?.code === "permission-denied") {
+    au.signOut(auth);
+    $("#le").textContent = msg;
+  } else alert(msg);
+  throw e;
+}
+
+const cv = o => Object.fromEntries(Object.entries(o).map(([k,v]) => [k, v && v.inc !== undefined ? fs.increment(v.inc) : v]));
+
+const DB = {
+  sub: (c, cb) => {
+    if (!logged()) return () => {};
+    return fs.onSnapshot(
+      fs.collection(db, c),
+      s => cb(s.docs.map(x => ({ id: x.id, ...x.data() }))),
+      e => dbFail(e)
+    );
+  },
+  add: async (c, o) => {
+    if (!(await needAuth())) return;
+    try { return await fs.addDoc(fs.collection(db, c), cv(o)); }
+    catch (e) { return dbFail(e); }
+  },
+  upd: async (c, id, o) => {
+    if (!(await needAuth())) return;
+    try { return await fs.updateDoc(fs.doc(db, c, id), cv(o)); }
+    catch (e) { return dbFail(e); }
+  },
+  del: async (c, id) => {
+    if (!(await needAuth())) return;
+    try { return await fs.deleteDoc(fs.doc(db, c, id)); }
+    catch (e) { return dbFail(e); }
+  },
+  batch: async ops => {
+    if (!(await needAuth())) return;
+    try {
+      const b = fs.writeBatch(db);
+      ops.forEach(p => {
+        if (p.t === "set") b.set(fs.doc(fs.collection(db, p.c)), cv(p.o));
+        else if (p.t === "upd") b.update(fs.doc(db, p.c, p.id), cv(p.o));
+        else b.delete(fs.doc(db, p.c, p.id));
+      });
+      await b.commit();
+    } catch (e) { return dbFail(e); }
+  }
+};
+
+const Auth = {
+  on: cb => au.onAuthStateChanged(auth, cb),
+  login: (e, p) => au.signInWithEmailAndPassword(auth, e.trim().toLowerCase(), p),
+  out: () => au.signOut(auth)
+};
+
+const pad = n => String(n).padStart(2, "0");
+const dk = t => { const d = new Date(t); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+const ym = t => dk(t).slice(0, 7);
+const fd = d => d ? d.split("-").reverse().join("/") : "";
+const S = { products:[], supplies:[], sales:[], clients:[], orders:[], moves:[], cart:[], tab:"painel", month:ym(Date.now()), day:"", mk:"todos" };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const R = v => (+v || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+const D = t => new Date(t).toLocaleString("pt-BR", { dateStyle:"short", timeStyle:"short" });
+const H = t => new Date(t).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
+const TABS = {
+  painel:["📊","Painel"], vender:["🛒","Vender"], calendario:["📅","Calendário"], encomendas:["🎂","Encomendas"],
+  clientes:["👥","Clientes"], produtos:["🥖","Produtos"], insumos:["📦","Insumos"], movimentos:["🔁","Movimentações"], vendas:["🧾","Vendas"]
+};
+const tabLabel = k => `${TABS[k][0]} ${TABS[k][1]}`;
+const STS = ["Pendente","Em produção","Pronto","Entregue","Cancelada"], STC = { Pendente:"warn", "Em produção":"info", Pronto:"okt", Entregue:"okt", Cancelada:"low" };
+let unsubs = [];
+
+const closeNav = () => document.body.classList.remove("nav-open");
+const openNav = () => document.body.classList.add("nav-open");
+$("#nav").innerHTML = Object.entries(TABS).map(([k,[ico,lbl]]) => `<button type="button" data-t="${k}"><span class="ico">${ico}</span><span class="lbl">${lbl}</span></button>`).join("");
+$("#nav").onclick = e => {
+  if (!logged()) return;
+  const t = e.target.closest("button")?.dataset.t;
+  if (t) { S.tab = t; closeNav(); render(); }
+};
+$("#menu").onclick = () => document.body.classList.toggle("nav-open");
+$("#scrim").onclick = closeNav;
+$("#out").onclick = () => { closeNav(); Auth.out(); };
+$("#outm").onclick = () => { closeNav(); Auth.out(); };
+addEventListener("keydown", e => { if (e.key === "Escape") closeNav(); });
+addEventListener("resize", () => { if (matchMedia("(min-width:761px)").matches) closeNav(); });
+$("#lf").onsubmit = async e => {
+  e.preventDefault();
+  $("#le").textContent = "";
+  const btn = e.target.querySelector("button");
+  btn.disabled = true;
+  try { await Auth.login($("#em").value, $("#pw").value); }
+  catch (err) { $("#le").textContent = authMsg(err?.code); }
+  finally { btn.disabled = false; }
+};
+
+function form(title, fields, save) {
+  if (!logged()) return;
+  const d = $("#dlg");
+  d.innerHTML = `<h3>${esc(title)}</h3><form>${fields.map(f => `<label>${f.l}</label>` +
+    (f.o ? `<select name="${f.k}">${f.o.map(o => `<option ${o == f.v ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>`
+    : `${f.u ? '<div style="display:flex;gap:6px">' : ""}<input name="${f.k}" type="${f.t || "text"}" step="any" value="${esc(f.v ?? "")}" ${f.req === false ? "" : "required"}>${f.u ? `<select name="${f.k}_u" style="width:96px">${f.u.map(x => `<option ${x == f.uv ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></div>` : ""}`)).join("")}
+    <div class="row" style="margin-top:16px"><button type="button" class="s" id="cx">Cancelar</button><button class="p">Salvar</button></div></form>`;
+  d.showModal();
+  $("#cx").onclick = () => d.close();
+  d.querySelector("form").onsubmit = async e => {
+    e.preventDefault();
+    if (!logged()) return d.close();
+    const o = Object.fromEntries(new FormData(e.target));
+    for (const f of fields) if (f.t === "number") o[f.k] = +o[f.k] || 0;
+    try {
+      if (await save(o) === false) return;
+      d.close();
+    } catch {}
+  };
+}
+
+const UB = { g:["m",1], kg:["m",1000], ml:["v",1], L:["v",1000], "un.":["u",1] };
+const FAM = u => ({ m:["g","kg"], v:["ml","L"], u:["un."] }[(UB[u] || ["u"])[0]]);
+const conv = (q,a,b) => UB[a] && UB[b] && UB[a][0] === UB[b][0] ? q * UB[a][1] / UB[b][1] : q;
+const nm = p => (p.code ? p.code + " - " : "") + p.name;
+const uu = p => p.und || "un.";
+const mvo = (kind,id,name,d,why,unit,extra={}) => ({ ts:Date.now(), kind, id, name, d, why, unit, ...extra });
+const MV = (kind,id,name,d,why,unit,extra) => ({ t:"set", c:"moves", o:mvo(kind,id,name,d,why,unit,extra) });
+const avgCost = (oldQty, oldCost, addQty, pay) => {
+  const nq = (oldQty || 0) + addQty;
+  if (!(addQty > 0) || !(pay > 0)) return +(oldCost || 0);
+  return +(nq > 0 ? ((oldQty || 0) * (oldCost || 0) + pay) / nq : pay / addQty).toFixed(6);
+};
+const stockVal = p => +((p.qty || 0) * (p.cost || 0)).toFixed(2);
+const recipeCost = p => {
+  if (!p.rec?.length) return null;
+  let t = 0;
+  for (const r of p.rec) {
+    const s = S.supplies.find(x => x.id === r.id);
+    if (!s) continue;
+    t += conv(r.q, r.u || s.unit, s.unit) * (s.cost || 0);
+  }
+  return +((t / (p.rend || 1))).toFixed(2);
+};
+
+window.A = {
+  prod: id => {
+    const p = S.products.find(x => x.id === id) || {};
+    form(id ? "Editar produto" : "Novo produto", [
+      { k:"code", l:"Código (único)", v:p.code || "P" + String(S.products.length + 1).padStart(3,"0") },
+      { k:"name", l:"Nome (ex.: Biscoito de milho)", v:p.name }, { k:"cat", l:"Categoria (pão, bolo, biscoito...)", v:p.cat, req:false },
+      { k:"peso", l:"Peso / tamanho (ex.: 500 g)", v:p.peso, req:false },
+      { k:"und", l:"Unidade de venda", o:["un.","pacote","caixa","fatia","kg"], v:p.und || "un." },
+      { k:"desc", l:"Detalhes (ex.: pacote com 10 biscoitos)", v:p.desc, req:false },
+      { k:"price", l:"Preço de venda (R$)", t:"number", v:p.price },
+      ...(id ? [] : [{ k:"stock", l:"Estoque inicial", t:"number", v:0 }]),
+      { k:"min", l:"Avisar quando estoque ≤", t:"number", v:p.min ?? 3 },
+      { k:"active", l:"À venda?", o:["Sim","Não"], v:p.active === false ? "Não" : "Sim" }
+    ], o => {
+      o.code = o.code.trim().toUpperCase(); o.active = o.active === "Sim";
+      if (S.products.some(x => x.code === o.code && x.id !== id)) return alert("Já existe um produto com esse código."), false;
+      if (id) return DB.upd("products", id, o);
+      return DB.batch([{ t:"set", c:"products", o }, ...(o.stock > 0 ? [MV("produto","", o.code + " - " + o.name, o.stock, "Estoque inicial", o.und)] : [])]);
+    });
+  },
+  rec: id => {
+    const p = S.products.find(x => x.id === id), r = p.rec || [];
+    if (!S.supplies.length) return alert("Cadastre os insumos primeiro.");
+    form("Receita: " + nm(p), [
+      { k:"rend", l:"Rendimento: quantas unidades de venda a receita produz", t:"number", v:p.rend || 1 },
+      ...S.supplies.map(x => {
+        const y = r.find(z => z.id === x.id) || {};
+        return { k:"s_" + x.id, l:`${esc(nm(x))} (quantidade por receita)`, t:"number", req:false, v:y.q || "", u:FAM(x.unit), uv:y.u || (x.unit === "kg" ? "g" : x.unit === "L" ? "ml" : x.unit) };
+      })
+    ], o => DB.upd("products", id, { rend:o.rend || 1, rec:S.supplies.map(x => ({ id:x.id, q:o["s_" + x.id], u:o["s_" + x.id + "_u"] || x.unit })).filter(x => x.q > 0) }));
+  },
+  sup: id => {
+    const p = S.supplies.find(x => x.id === id) || {};
+    form(id ? "Editar insumo" : "Novo insumo", [
+      { k:"code", l:"Código (único)", v:p.code || "I" + String(S.supplies.length + 1).padStart(3,"0") },
+      { k:"name", l:"Nome (ex.: farinha de arroz)", v:p.name },
+      { k:"unit", l:"Unidade de estoque", o:["kg","g","L","ml","un."], v:p.unit || "kg" },
+      ...(id ? [
+        { k:"cost", l:`Custo médio por ${(p.unit || "kg")} (R$)`, t:"number", v:p.cost ?? 0, req:false }
+      ] : [
+        { k:"qty", l:"Quantidade inicial", t:"number", v:0 },
+        { k:"pay", l:"Valor total pago nessa quantidade (R$)", t:"number", v:0, req:false }
+      ]),
+      { k:"min", l:"Avisar quando ≤", t:"number", v:p.min ?? 1 }
+    ], o => {
+      o.code = o.code.trim().toUpperCase();
+      if (S.supplies.some(x => x.code === o.code && x.id !== id)) return alert("Já existe um insumo com esse código."), false;
+      if (id) {
+        o.cost = +(o.cost || 0);
+        return DB.upd("supplies", id, o);
+      }
+      const pay = +(o.pay || 0); delete o.pay;
+      if (o.qty > 0 && pay > 0) { o.cost = +(pay / o.qty).toFixed(6); o.lastCost = o.cost; o.lastPay = pay; }
+      else { o.cost = 0; o.lastCost = 0; o.lastPay = 0; }
+      return DB.batch([
+        { t:"set", c:"supplies", o },
+        ...(o.qty > 0 ? [MV("insumo", "", o.code + " - " + o.name, o.qty, "Estoque inicial", o.unit, pay > 0 ? { cost:pay, unitCost:o.cost } : {})] : [])
+      ]);
+    });
+  },
+  adj: (c, id) => {
+    const p = S[c].find(x => x.id === id), pr = c === "products", f = pr ? "stock" : "qty", u = pr ? uu(p) : p.unit, rec = pr && p.rec && p.rec.length;
+    form("Movimentar: " + nm(p), [
+      { k:"tipo", l:"Tipo", o:["Entrada","Saída"] },
+      { k:"q", l:pr ? "Quantidade (" + u + ")" : "Quantidade", t:"number", v:"", ...(pr ? {} : { u:FAM(u), uv:u }) },
+      { k:"why", l:"Motivo" + (rec ? " (Produção baixa os insumos da receita)" : ""), o:["Produção","Compra","Uso na produção","Perda / vencimento","Ajuste de inventário","Outro"] },
+      ...(!pr ? [{ k:"pay", l:"Valor total pago (R$) — use em entrada/compra", t:"number", v:"", req:false }] : [])
+    ], async o => {
+      if (!(o.q > 0)) return alert("Informe uma quantidade maior que zero."), false;
+      if (!pr) o.q = +conv(o.q, o.q_u || u, u).toFixed(4);
+      const d = o.tipo === "Entrada" ? o.q : -o.q;
+      const pay = !pr ? +(o.pay || 0) : 0;
+      const upd = { [f]:{ inc:d } };
+      let extra = {};
+      if (!pr && d > 0 && pay > 0) {
+        const unitBuy = +(pay / o.q).toFixed(6);
+        upd.cost = avgCost(p.qty, p.cost, o.q, pay);
+        upd.lastCost = unitBuy;
+        upd.lastPay = pay;
+        extra = { cost:pay, unitCost:unitBuy };
+      } else if (!pr && d > 0 && (o.why === "Compra" || o.why === "Estoque inicial") && !(pay > 0)) {
+        if (!confirm("Entrada sem valor pago. Continuar sem atualizar o custo?")) return false;
+      }
+      const ops = [{ t:"upd", c, id, o:upd }, MV(pr ? "produto" : "insumo", id, nm(p), d, o.why, u, extra)];
+      if (rec && d > 0 && o.why === "Produção") {
+        const us = p.rec.map(r => { const s = S.supplies.find(x => x.id === r.id); return { s, u:s ? +conv(r.q * o.q / (p.rend || 1), r.u || s.unit, s.unit).toFixed(4) : 0 }; }).filter(x => x.s);
+        const short = us.filter(x => x.s.qty < x.u).map(x => x.s.name);
+        if (short.length && !confirm("Insumo(s) insuficiente(s): " + short.join(", ") + ". Continuar mesmo assim?")) return false;
+        us.forEach(x => {
+          const usedCost = +((x.u * (x.s.cost || 0)).toFixed(2));
+          ops.push({ t:"upd", c:"supplies", id:x.s.id, o:{ qty:{ inc:-x.u } } }, MV("insumo", x.s.id, nm(x.s), -x.u, "Produção de " + p.name, x.s.unit, usedCost ? { cost:usedCost, unitCost:x.s.cost || 0 } : {}));
+        });
+      }
+      await DB.batch(ops);
+    });
+  },
+  cli: id => {
+    const p = S.clients.find(x => x.id === id) || {};
+    form(id ? "Editar cliente" : "Novo cliente", [
+      { k:"name", l:"Nome", v:p.name }, { k:"phone", l:"WhatsApp / telefone", v:p.phone, req:false },
+      { k:"nasc", l:"Data de nascimento (aniversário)", t:"date", v:p.nasc, req:false },
+      { k:"restr", l:"Restrições alimentares (celíaco, sem lactose...)", v:p.restr, req:false },
+      { k:"addr", l:"Endereço / bairro", v:p.addr, req:false }, { k:"obs", l:"Observações", v:p.obs, req:false }
+    ], o => id ? DB.upd("clients", id, o) : DB.add("clients", o));
+  },
+  ord: id => {
+    const p = S.orders.find(x => x.id === id) || {};
+    form(id ? "Editar encomenda" : "Nova encomenda", [
+      { k:"client", l:"Cliente", o:["Avulso", ...S.clients.map(c => c.name)], v:p.client },
+      { k:"desc", l:"O que foi pedido", v:p.desc }, { k:"date", l:"Data de entrega", t:"date", v:p.date || dk(Date.now()) },
+      { k:"val", l:"Valor total (R$)", t:"number", v:p.val }, { k:"sinal", l:"Sinal já pago (R$)", t:"number", v:p.sinal ?? 0 },
+      { k:"status", l:"Status", o:STS, v:p.status || "Pendente" }
+    ], o => id ? DB.upd("orders", id, o) : DB.add("orders", o));
+  },
+  next: id => {
+    if (!logged()) return;
+    const o = S.orders.find(x => x.id === id), i = STS.indexOf(o.status);
+    if (i < 3) DB.upd("orders", id, { status:STS[i + 1] });
+  },
+  del: async (c, id) => { if (confirm("Excluir este item?")) await DB.del(c, id); },
+  add: id => {
+    if (!logged()) return;
+    const p = S.products.find(x => x.id === id), i = S.cart.find(x => x.id === id);
+    if ((i ? i.q : 0) + 1 > p.stock) return alert("Sem estoque suficiente.");
+    i ? i.q++ : S.cart.push({ id, name:nm(p), price:p.price, q:1 });
+    render();
+  },
+  qty: (id, n) => {
+    if (!logged()) return;
+    const i = S.cart.find(x => x.id === id); i.q += n;
+    if (i.q <= 0) S.cart = S.cart.filter(x => x !== i);
+    else if (i.q > S.products.find(x => x.id === id).stock) { i.q--; alert("Sem estoque suficiente."); }
+    render();
+  },
+  sell: async () => {
+    if (!logged() || !S.cart.length) return;
+    const total = S.cart.reduce((a, i) => a + i.price * i.q, 0);
+    await DB.batch([
+      { t:"set", c:"sales", o:{ ts:Date.now(), items:S.cart.map(i => ({ ...i })), total, pay:$("#pay").value, ch:$("#ch").value, client:$("#cl").value.trim() } },
+      ...S.cart.map(i => ({ t:"upd", c:"products", id:i.id, o:{ stock:{ inc:-i.q } } })),
+      ...S.cart.map(i => MV("produto", i.id, i.name, -i.q, "Venda", "un."))
+    ]);
+    S.cart = []; render(); alert("Venda registrada! " + R(total));
+  },
+  cancel: async id => {
+    if (!confirm("Cancelar venda e devolver itens ao estoque?")) return;
+    const s = S.sales.find(x => x.id === id), its = s.items.filter(i => S.products.some(p => p.id === i.id));
+    await DB.batch([
+      ...its.map(i => ({ t:"upd", c:"products", id:i.id, o:{ stock:{ inc:i.q } } })),
+      ...its.map(i => MV("produto", i.id, i.name, i.q, "Venda cancelada", "un.")),
+      { t:"del", c:"sales", id }
+    ]);
+  },
+  month: v => { if (v) { S.month = v; S.day = ""; render(); } },
+  nav: n => { const [y,m] = S.month.split("-").map(Number), d = new Date(y, m - 1 + n, 1); S.month = d.getFullYear() + "-" + pad(d.getMonth() + 1); S.day = ""; render(); },
+  day: k => { S.day = k; render(); },
+  mk: v => { S.mk = v; render(); },
+  code: v => { const p = S.products.find(x => x.code === v.trim().toUpperCase()); if (!p || p.active === false) return alert("Código não encontrado."); A.add(p.id); },
+  csv: () => {
+    const rows = [["Data","Cliente","Canal","Pagamento","Itens","Total"], ...monthSales().map(s => [D(s.ts), s.client || "", s.ch, s.pay, s.items.map(i => i.q + "x " + i.name).join("; "), s.total])];
+    const t = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + t], { type:"text/csv" })); a.download = `vendas-${S.month}.csv`; a.click();
+  }
+};
+
+const monthSales = () => S.sales.filter(s => ym(s.ts) === S.month).sort((a,b) => b.ts - a.ts);
+const sum = a => a.reduce((x,s) => x + s.total, 0);
+const stockTag = (q,m) => `<span class="tag ${q <= m ? "low" : "okt"}">${q <= m ? "baixo" : "ok"}</span>`;
+const K = (v,l) => `<div class="card kpi"><b>${v}</b><span>${l}</span></div>`;
+const T = (h,rows) => `<div class="tw"><table><tr>${h.map(x => `<th>${x}</th>`).join("")}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</table></div>`;
+const Bt = (l,f,c="") => `<button class="s ${c}" onclick="${f}">${l}</button>`;
+const empty = t => `<p class="m">${t}</p>`;
+const mvTxt = x => `<span class="${x.d > 0 ? "up" : "dn"}">${x.d > 0 ? "+" : ""}${x.d} ${esc(x.unit)}</span>`;
+const mvCost = x => x.cost > 0 ? R(x.cost) + (x.unitCost > 0 ? `<br><small class="m">${R(x.unitCost)}/${esc(x.unit)}</small>` : "") : '<span class="m">—</span>';
+const mvRows = l => l.sort((a,b) => b.ts - a.ts).map(x => [D(x.ts), x.kind === "produto" ? "Produto" : "Insumo", esc(x.name), mvTxt(x), esc(x.why), mvCost(x)]);
+const mvHead = ["Data","Tipo","Item","Movimento","Motivo","Custo"];
+const buySpend = l => l.filter(x => x.kind === "insumo" && x.d > 0 && x.cost > 0).reduce((a,x) => a + x.cost, 0);
+const orderRows = l => l.map(o => [fd(o.date), esc(o.client), esc(o.desc), R(o.val), R(Math.max(0, o.val - o.sinal)), `<span class="tag ${STC[o.status]}">${o.status}</span>`]);
+const open = () => S.orders.filter(o => o.status !== "Entregue" && o.status !== "Cancelada");
+const mlabel = () => { const [y,m] = S.month.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleDateString("pt-BR", { month:"long", year:"numeric" }); };
+const nextBd = n => { const t = new Date(); t.setHours(0,0,0,0); const [,m,d] = n.split("-").map(Number); let x = new Date(t.getFullYear(), m - 1, d); if (x < t) x = new Date(t.getFullYear() + 1, m - 1, d); return Math.round((x - t) / 864e5); };
+const bd = n => { const [,m,d] = n.split("-"), k = nextBd(n); return d + "/" + m + (k === 0 ? ' <span class="tag warn">hoje</span>' : k <= 7 ? ` <span class="tag info">em ${k}d</span>` : ""); };
+
+const V = {
+  painel() {
+    const t = new Date().toDateString(), hoje = S.sales.filter(s => new Date(s.ts).toDateString() === t), mes = monthSales(),
+      lp = S.products.filter(p => p.stock <= p.min), ls = S.supplies.filter(p => p.qty <= p.min), op = open().sort((a,b) => a.date > b.date ? 1 : -1),
+      stockMoney = S.supplies.reduce((a,p) => a + stockVal(p), 0),
+      spentMes = buySpend(S.moves.filter(x => ym(x.ts) === S.month));
+    return `<div class="grid">${K(R(sum(hoje)), "Vendas hoje (" + hoje.length + ")")}${K(R(sum(mes)), "Vendas no mês (" + mes.length + ")")}${K(R(stockMoney), "Valor em insumos")}${K(R(spentMes), "Compras de insumos no mês")}${K(op.length, "Encomendas em aberto")}${K(lp.length + ls.length, "Itens com estoque baixo")}</div>
+    <div class="grid2"><div class="card"><h3>🥖 Produtos com estoque baixo</h3>${lp.length ? T(["Produto","Estoque","Mínimo"], lp.map(p => [esc(nm(p)), `<span class="tag low">${p.stock} ${esc(uu(p))}</span>`, p.min + " " + esc(uu(p))])) : empty("Nenhum produto em falta 🎉")}</div>
+    <div class="card"><h3>📦 Insumos com estoque baixo</h3>${ls.length ? T(["Insumo","Estoque","Mínimo"], ls.map(p => [esc(nm(p)), `<span class="tag low">${p.qty} ${esc(p.unit)}</span>`, p.min + " " + esc(p.unit)])) : empty("Nenhum insumo em falta 🎉")}</div></div>
+    <div class="card"><h3>🎂 Próximas encomendas</h3>${op.length ? T(["Entrega","Cliente","Pedido","Valor","A receber","Status"], orderRows(op.slice(0,6))) : empty("Nenhuma encomenda em aberto.")}</div>`;
+  },
+  vender() {
+    const ps = S.products.filter(p => p.active !== false && p.stock > 0), tot = S.cart.reduce((a,i) => a + i.price * i.q, 0);
+    return `<div class="card"><div class="row"><h3 style="margin:0">Toque no produto ou digite o código</h3><input id="cd" placeholder="Código + Enter" style="width:170px" onkeydown="if(event.key==='Enter'){A.code(this.value)}"></div><div class="prod">${ps.map(p => `<button onclick="A.add('${p.id}')"><b>${esc(p.name)}</b><small>${esc(p.code)} • ${R(p.price)} • ${p.stock} ${esc(uu(p))}</small></button>`).join("") || empty("Cadastre produtos e estoque primeiro.")}</div></div>
+    <div class="card"><h3>Carrinho</h3>${T(["Produto","Qtd","Subtotal"], S.cart.map(i => [esc(i.name), `<button class="s" onclick="A.qty('${i.id}',-1)">−</button> ${i.q} <button class="s" onclick="A.qty('${i.id}',1)">+</button>`, R(i.price * i.q)]))}
+    <div class="grid" style="margin-top:12px"><div><label>Canal</label><select id="ch"><option>WhatsApp</option><option>Em casa</option><option>Feira</option><option>Encomenda</option></select></div>
+    <div><label>Pagamento</label><select id="pay"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Fiado</option></select></div>
+    <div><label>Cliente (opcional)</label><input id="cl" list="cls"><datalist id="cls">${S.clients.map(c => `<option value="${esc(c.name)}">`).join("")}</datalist></div></div>
+    <div class="row" style="margin-top:12px"><h2 style="margin:0">${R(tot)}</h2><button class="p" onclick="A.sell()">Finalizar venda</button></div></div>`;
+  },
+  calendario() {
+    const [y,m] = S.month.split("-").map(Number), first = new Date(y, m - 1, 1).getDay(), n = new Date(y, m, 0).getDate(), tk = dk(Date.now());
+    const ms = monthSales(), mo = S.orders.filter(o => (o.date || "").slice(0,7) === S.month), mm = S.moves.filter(x => ym(x.ts) === S.month);
+    if (!S.day || S.day.slice(0,7) !== S.month) S.day = tk.slice(0,7) === S.month ? tk : S.month + "-01";
+    let cells = "<div></div>".repeat(first);
+    for (let i = 1; i <= n; i++) {
+      const k = S.month + "-" + pad(i), vs = ms.filter(s => dk(s.ts) === k), os = mo.filter(o => o.date === k), mv = mm.filter(x => dk(x.ts) === k), bs = S.clients.filter(c => c.nasc && c.nasc.slice(5) === k.slice(5));
+      cells += `<div class="day${k === S.day ? " sel" : ""}${k === tk ? " t" : ""}" onclick="A.day('${k}')"><b>${i}</b>${vs.length ? `<span class="chip c1">${R(sum(vs))}</span>` : ""}${os.length ? `<span class="chip c2">${os.length} encomenda${os.length > 1 ? "s" : ""}</span>` : ""}${mv.length ? `<span class="chip c3">${mv.length} mov.</span>` : ""}${bs.length ? `<span class="chip c4">${bs.length > 1 ? bs.length + " aniversários" : "Aniv. " + esc(bs[0].name)}</span>` : ""}</div>`;
+    }
+    const top = {}, ch = {}; ms.forEach(s => { ch[s.ch] = (ch[s.ch] || 0) + s.total; s.items.forEach(i => top[i.name] = (top[i.name] || 0) + i.q); });
+    const tp = Object.entries(top).sort((a,b) => b[1] - a[1]).slice(0,5), pm = mm.filter(x => x.kind === "produto"), im = mm.filter(x => x.kind === "insumo");
+    const dv = S.sales.filter(s => dk(s.ts) === S.day), dO = S.orders.filter(o => o.date === S.day), dM = S.moves.filter(x => dk(x.ts) === S.day), dB = S.clients.filter(c => c.nasc && c.nasc.slice(5) === S.day.slice(5));
+    return `<div class="row"><button class="s" onclick="A.nav(-1)">◀</button><h3 style="margin:0;text-transform:capitalize">${mlabel()}</h3><button class="s" onclick="A.nav(1)">▶</button></div>
+    <div class="grid">${K(R(sum(ms)), "Vendas (" + ms.length + ")")}${K(R(ms.length ? sum(ms) / ms.length : 0), "Ticket médio")}${K(mo.length + " • " + R(mo.reduce((a,o) => a + o.val, 0)), "Encomendas no mês")}
+    ${K(mo.filter(o => o.status === "Entregue").length, "Encomendas entregues")}${K(pm.filter(x => x.d > 0).reduce((a,x) => a + x.d, 0) + " / " + -pm.filter(x => x.d < 0).reduce((a,x) => a + x.d, 0) + " un.", "Produtos: entradas / saídas")}${K(im.filter(x => x.d > 0).length + " / " + im.filter(x => x.d < 0).length, "Insumos: nº entradas / saídas")}</div>
+    <div class="grid2"><div class="card"><h3>🏆 Mais vendidos</h3>${tp.length ? T(["Produto","Un."], tp.map(([a,b]) => [esc(a), b])) : empty("Sem vendas no mês.")}</div>
+    <div class="card"><h3>📍 Por canal</h3>${Object.keys(ch).length ? T(["Canal","Total"], Object.entries(ch).map(([a,b]) => [esc(a), R(b)])) : empty("Sem vendas no mês.")}</div></div>
+    <div class="card"><div class="cal">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].map(d => `<div class="h">${d}</div>`).join("")}${cells}</div>
+    <p class="m"><span class="tag okt">vendas</span> <span class="tag" style="background:#ece6fb;color:#5b3fb5">entregas</span> <span class="tag" style="background:#f1eced">movimentações</span> <span class="tag" style="background:#fde4ee;color:#b3124f">aniversários</span> - toque num dia para ver o registro.</p></div>
+    <div class="card"><h3>Registro de ${fd(S.day)}</h3>
+    ${dB.length ? `<p><b>Aniversariantes</b></p>` + T(["Cliente","Contato","Restrições"], dB.map(c => [esc(c.name), esc(c.phone), esc(c.restr)])) : ""}
+    <p><b>Vendas</b> ${dv.length ? "- " + R(sum(dv)) : ""}</p>${dv.length ? T(["Hora","Itens","Canal","Pgto","Total"], dv.map(s => [H(s.ts), s.items.map(i => `${i.q}x ${esc(i.name)}`).join(", ") + (s.client ? ` <small>(${esc(s.client)})</small>` : ""), esc(s.ch), esc(s.pay), R(s.total)])) : empty("Sem vendas neste dia.")}
+    <p><b>Encomendas para entrega</b></p>${dO.length ? T(["Cliente","Pedido","Valor","A receber","Status"], dO.map(o => [esc(o.client), esc(o.desc), R(o.val), R(Math.max(0, o.val - o.sinal)), `<span class="tag ${STC[o.status]}">${o.status}</span>`])) : empty("Nenhuma entrega neste dia.")}
+    <p><b>Movimentações de estoque</b></p>${dM.length ? T(mvHead, mvRows([...dM])) : empty("Sem movimentações neste dia.")}</div>`;
+  },
+  encomendas() {
+    const l = [...S.orders].sort((a,b) => (open().includes(a) ? 0 : 1) - (open().includes(b) ? 0 : 1) || (a.date > b.date ? 1 : -1));
+    return `<div class="card"><div class="row"><h3>Encomendas</h3><button class="p" onclick="A.ord()">+ Nova encomenda</button></div>${l.length ? T(["Entrega","Cliente","Pedido","Valor","A receber","Status",""], l.map(o => [...orderRows([o])[0],
+      (["Entregue","Cancelada","Pronto"].includes(o.status) && o.status !== "Pronto" ? "" : Bt(o.status === "Pronto" ? "✓ Entregue" : "Avançar", "A.next('" + o.id + "')")) + " " + Bt("Editar", "A.ord('" + o.id + "')") + " " + Bt("✕", "A.del('orders','" + o.id + "')", "d")])) : empty("Nenhuma encomenda cadastrada.")}</div>`;
+  },
+  clientes() {
+    return `<div class="card"><div class="row"><h3>Clientes</h3><button class="p" onclick="A.cli()">+ Novo cliente</button></div>${S.clients.length ? T(["Cliente","Contato","Aniversário","Restrições","Compras","Total gasto",""],
+      [...S.clients].sort((a,b) => a.name.localeCompare(b.name)).map(c => {
+        const vs = S.sales.filter(s => s.client === c.name), dg = (c.phone || "").replace(/\D/g, "");
+        return [`<b>${esc(c.name)}</b>${c.addr ? `<br><small class="m">${esc(c.addr)}</small>` : ""}`, dg ? `<a href="https://wa.me/55${dg}" target="_blank" rel="noopener">${esc(c.phone)}</a>` : "", c.nasc ? bd(c.nasc) : "", esc(c.restr), vs.length, R(sum(vs)), Bt("Editar", "A.cli('" + c.id + "')") + " " + Bt("✕", "A.del('clients','" + c.id + "')", "d")];
+      })) : empty("Nenhum cliente cadastrado.")}</div>`;
+  },
+  produtos() {
+    return `<div class="card"><div class="row"><h3>Produtos</h3><button class="p" onclick="A.prod()">+ Novo produto</button></div>${T(["Código","Produto","Preço","Custo est.","Estoque","Receita",""],
+      [...S.products].sort((a,b) => (a.code || "").localeCompare(b.code || "")).map(p => {
+        const rc = recipeCost(p);
+        return [`<b>${esc(p.code)}</b>`, esc(p.name) + (p.active === false ? " <small class=m>(fora de venda)</small>" : "") + `<br><small class="m">${[p.cat, p.peso, p.desc].filter(Boolean).map(x => esc(x)).join(" - ")}</small>`, R(p.price),
+        rc == null ? '<span class="m">—</span>' : `${R(rc)}${p.price > 0 ? `<br><small class="m">margem ${(((p.price - rc) / p.price) * 100).toFixed(0)}%</small>` : ""}`,
+        p.stock + " " + esc(uu(p)) + " " + stockTag(p.stock, p.min),
+        p.rec && p.rec.length ? p.rec.length + " insumo(s) - rende " + (p.rend || 1) : '<span class="m">sem receita</span>',
+        Bt("± estoque", "A.adj('products','" + p.id + "')") + " " + Bt("Receita", "A.rec('" + p.id + "')") + " " + Bt("Editar", "A.prod('" + p.id + "')") + " " + Bt("✕", "A.del('products','" + p.id + "')", "d")];
+      }))}</div>`;
+  },
+  insumos() {
+    const tot = S.supplies.reduce((a,p) => a + stockVal(p), 0);
+    return `<div class="card"><div class="row"><h3>Insumos (farinhas, castanhas, etc.)</h3><button class="p" onclick="A.sup()">+ Novo insumo</button></div>
+    <p class="m" style="margin-top:-4px">Estoque valorizado: <b>${R(tot)}</b> (pelo custo médio)</p>
+    ${T(["Código","Insumo","Quantidade","Custo/un.","Última compra","Em estoque",""],
+      [...S.supplies].sort((a,b) => (a.code || "").localeCompare(b.code || "")).map(p => [
+        `<b>${esc(p.code)}</b>`, esc(p.name),
+        p.qty + " " + esc(p.unit) + " " + stockTag(p.qty, p.min),
+        p.cost > 0 ? R(p.cost) + "/" + esc(p.unit) : '<span class="m">sem custo</span>',
+        p.lastCost > 0 ? R(p.lastCost) + "/" + esc(p.unit) + (p.lastPay > 0 ? `<br><small class="m">pagou ${R(p.lastPay)}</small>` : "") : '<span class="m">—</span>',
+        R(stockVal(p)),
+        Bt("± estoque", "A.adj('supplies','" + p.id + "')") + " " + Bt("Editar", "A.sup('" + p.id + "')") + " " + Bt("✕", "A.del('supplies','" + p.id + "')", "d")
+      ]))}</div>`;
+  },
+  movimentos() {
+    const l = S.moves.filter(x => ym(x.ts) === S.month && (S.mk === "todos" || x.kind === S.mk));
+    const spent = buySpend(S.moves.filter(x => ym(x.ts) === S.month));
+    return `<div class="card"><div class="row"><h3>Entradas e saídas de estoque</h3><div class="row" style="margin:0"><input type="month" value="${S.month}" onchange="A.month(this.value)" style="width:auto">
+    <select onchange="A.mk(this.value)" style="width:auto">${["todos","produto","insumo"].map(k => `<option value="${k}" ${k === S.mk ? "selected" : ""}>${k === "todos" ? "Todos" : k === "produto" ? "Produtos" : "Insumos"}</option>`).join("")}</select></div></div>
+    <p class="m">Compras de insumos no mês (com valor informado): <b>${R(spent)}</b></p>
+    ${l.length ? T(mvHead, mvRows(l)) : empty("Nenhuma movimentação neste mês.")}</div>`;
+  },
+  vendas() {
+    const m = monthSales();
+    return `<div class="card"><div class="row"><h3>Vendas</h3><div class="row" style="margin:0"><input type="month" value="${S.month}" onchange="A.month(this.value)" style="width:auto"><button class="s" onclick="A.csv()">⬇ CSV</button></div></div>
+    <p><b>${R(sum(m))}</b> em ${m.length} vendas</p>${T(["Data","Itens","Canal","Pgto","Total",""], m.map(s => [D(s.ts), s.items.map(i => `${i.q}x ${esc(i.name)}`).join(", ") + (s.client ? `<br><small class="m">${esc(s.client)}</small>` : ""), esc(s.ch), esc(s.pay), R(s.total), Bt("Cancelar", "A.cancel('" + s.id + "')", "d")]))}</div>`;
+  }
+};
+
+function render() {
+  if (!logged()) return;
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === S.tab));
+  const keep = ["ch","pay","cl"].map(i => $("#" + i)?.value);
+  $("#main").innerHTML = `<h2>${tabLabel(S.tab)}</h2>` + V[S.tab]();
+  if (S.tab === "vender") ["ch","pay","cl"].forEach((i,n) => { if (keep[n]) $("#" + i).value = keep[n]; });
+}
+
+function gate(u) {
+  user = u || null;
+  document.body.classList.remove("booting");
+  closeNav();
+  document.body.classList.toggle("in", !!user);
+  $("#login").hidden = !!user;
+  $("#app").hidden = !user;
+  unsubs.forEach(f => f());
+  unsubs = [];
+  if (!user) {
+    S.cart = []; S.tab = "painel";
+    COLS.forEach(c => S[c] = []);
+    $("#main").innerHTML = "";
+    $("#who").textContent = "";
+    const d = $("#dlg"); if (d.open) d.close();
     return;
   }
-  for(const c of COLS)unsubs.push(DB.sub(c,l=>{S[c]=l;render()}));
+  $("#who").textContent = user.email || "";
+  for (const c of COLS) unsubs.push(DB.sub(c, l => { S[c] = l; render(); }));
 }
+
 Auth.on(gate);
 </script>
 </body>
