@@ -47,14 +47,17 @@ dialog{border:0;border-radius:20px;padding:24px;width:min(460px,94vw);max-height
 .c1{background:#e3f6ea;color:#14753f}.c2{background:#ece6fb;color:#5b3fb5}.c3{background:#f1eced;color:#6b5a60}.c4{background:#fde4ee;color:#b3124f}
 .up{color:var(--ok);font-weight:700}.dn{color:var(--bad);font-weight:700}
 a{color:var(--v)}
-@media(max-width:820px){.shell{grid-template-columns:1fr}aside{position:static;height:auto;padding-bottom:6px}nav{flex-direction:row}main{padding:16px}.day{min-height:56px}.chip{font-size:.6rem}}
+body.booting #login,body.in #login{display:none!important}
+body:not(.in) #app{display:none!important}
+body.booting::after{content:"Carregando…";position:fixed;inset:0;display:grid;place-items:center;font:600 1rem system-ui,sans-serif;color:var(--mut);background:inherit;z-index:9}
+@media(max-width:820px){.shell{grid-template-columns:1fr}aside{position:static;height:auto;padding-bottom:6px}nav{flex-direction:row;flex-wrap:wrap}main{padding:16px}.day{min-height:56px}.chip{font-size:.6rem}}
 </style>
 </head>
-<body>
-<div id="login" class="card" hidden>
+<body class="booting">
+<div id="login" class="card">
   <div class="logo">Sublime</div><div class="sub">Casa de Pães, Biscoitos e Bolos</div>
-  <form id="lf"><label>E-mail</label><input id="em" type="email" required>
-  <label>Senha</label><input id="pw" type="password" required>
+  <form id="lf"><label>E-mail</label><input id="em" type="email" required autocomplete="username">
+  <label>Senha</label><input id="pw" type="password" required autocomplete="current-password">
   <p class="sub" id="dm" hidden>Modo demonstração<br><span style="font-weight:normal">e-mail: demo@sublime.com<br>senha: demo123</span></p>
   <p class="err" id="le"></p><button class="p" style="width:100%">Entrar</button></form>
 </div>
@@ -74,7 +77,7 @@ const firebaseConfig = {
   appId:"1:385701064574:web:2d15bc614128e327ec8d2f"
 };
 // Enquanto o Firebase não estiver configurado, roda em MODO DEMO (dados só neste navegador).
-const DEMO=firebaseConfig.apiKey==="AIzaSyB5EhvwpfsZuLWPdCX_crQeVj7uioBBWII";
+const DEMO=firebaseConfig.apiKey==="COLE_AQUI";
 const COLS=["products","supplies","sales","clients","orders","moves"];
 let DB,Auth;
 if(DEMO){
@@ -91,22 +94,26 @@ if(DEMO){
   const patch=(d,o)=>{for(const k in o){const v=o[k];d[k]=v&&v.inc!==undefined?(d[k]||0)+v.inc:v}};
   const run=p=>{if(p.t==="set")st[p.c].push({id:uid(),...p.o});else if(p.t==="upd"){const d=st[p.c].find(x=>x.id===p.id);d&&patch(d,p.o)}else st[p.c]=st[p.c].filter(x=>x.id!==p.id)};
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch{}cbs.forEach(f=>f())};
-  DB={sub:(c,cb)=>{const f=()=>cb(st[c].map(x=>({...x})));cbs.push(f);f();return()=>{}},
+  DB={sub:(c,cb)=>{const f=()=>cb(st[c].map(x=>({...x})));cbs.push(f);f();return()=>{const i=cbs.indexOf(f);if(i>=0)cbs.splice(i,1)}},
     add:async(c,o)=>{run({t:"set",c,o});save()},upd:async(c,id,o)=>{run({t:"upd",c,id,o});save()},
     del:async(c,id)=>{run({t:"del",c,id});save()},batch:async ops=>{ops.forEach(run);save()}};
-  Auth={on:cb=>{ac=cb;let u=null;try{u=localStorage.getItem(U)}catch{}cb(u?{}:null)},
-    login:async(e,p)=>{if(e.trim().toLowerCase()!=="demo@sublime.com"||p!=="demo123")throw 0;try{localStorage.setItem(U,"1")}catch{}ac({})},
+  Auth={on:cb=>{ac=cb;let u=null;try{u=localStorage.getItem(U)}catch{}cb(u?{uid:"demo"}:null)},
+    login:async(e,p)=>{if(e.trim().toLowerCase()!=="demo@sublime.com"||p!=="demo123")throw 0;try{localStorage.setItem(U,"1")}catch{}ac({uid:"demo"})},
     out:async()=>{try{localStorage.removeItem(U)}catch{}ac(null)}};
 }else{
   const B="https://www.gstatic.com/firebasejs/10.12.2/";
-  const {initializeApp}=await import(B+"firebase-app.js"),au=await import(B+"firebase-auth.js"),fs=await import(B+"firebase-firestore.js");
+  const J="https://cdn.jsdelivr.net/npm/firebase@10.12.2/",imp=async n=>{try{return await import(B+"firebase-"+n+".js")}catch{return await import(J+n+"/+esm")}};
+  let initializeApp,au,fs;
+  try{({initializeApp}=await imp("app"));au=await imp("auth");fs=await imp("firestore")}
+  catch(e){document.body.classList.remove("booting");document.body.innerHTML='<p style="padding:30px;font-family:sans-serif;max-width:480px">Não foi possível carregar o Firebase. Isso costuma ser bloqueador de anúncios, extensão de privacidade ou rede que bloqueia o Google. Desative o bloqueador para este site ou tente outra rede e recarregue.</p>';throw e}
   const app=initializeApp(firebaseConfig),a=au.getAuth(app),d=fs.getFirestore(app);
   const cv=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v&&v.inc!==undefined?fs.increment(v.inc):v]));
-  DB={sub:(c,cb)=>fs.onSnapshot(fs.collection(d,c),s=>cb(s.docs.map(x=>({id:x.id,...x.data()})))),
+  const onErr=e=>{console.error("[Firestore]",e);if(e?.code==="permission-denied")alert("Sem permissão no Firestore. Nas regras, use: allow read, write: if request.auth != null;");};
+  DB={sub:(c,cb)=>fs.onSnapshot(fs.collection(d,c),s=>cb(s.docs.map(x=>({id:x.id,...x.data()}))),onErr),
     add:(c,o)=>fs.addDoc(fs.collection(d,c),cv(o)),upd:(c,id,o)=>fs.updateDoc(fs.doc(d,c,id),cv(o)),
     del:(c,id)=>fs.deleteDoc(fs.doc(d,c,id)),
     batch:async ops=>{const b=fs.writeBatch(d);ops.forEach(p=>p.t==="set"?b.set(fs.doc(fs.collection(d,p.c)),cv(p.o)):p.t==="upd"?b.update(fs.doc(d,p.c,p.id),cv(p.o)):b.delete(fs.doc(d,p.c,p.id)));await b.commit()}};
-  Auth={on:cb=>au.onAuthStateChanged(a,cb),login:(e,p)=>au.signInWithEmailAndPassword(a,e,p),out:()=>au.signOut(a)};
+  Auth={on:cb=>au.onAuthStateChanged(a,cb),login:(e,p)=>au.signInWithEmailAndPassword(a,e.trim(),p),out:()=>au.signOut(a)};
 }
 
 const pad=n=>String(n).padStart(2,"0");
@@ -124,11 +131,12 @@ const STS=["Pendente","Em produção","Pronto","Entregue","Cancelada"],STC={Pend
 let unsubs=[];
 
 $("#nav").innerHTML=Object.entries(TABS).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join("");
-$("#nav").onclick=e=>{const t=e.target.closest("button")?.dataset.t;if(t){S.tab=t;render()}};
+$("#nav").onclick=e=>{if(!document.body.classList.contains("in"))return;const t=e.target.closest("button")?.dataset.t;if(t){S.tab=t;render()}};
 $("#out").onclick=()=>Auth.out();
 if(DEMO){$("#dm").hidden=false;$("#dm2").hidden=false}
-$("#lf").onsubmit=async e=>{e.preventDefault();$("#le").textContent="";
-  try{await Auth.login($("#em").value,$("#pw").value)}catch{$("#le").textContent="E-mail ou senha incorretos."}};
+$("#lf").onsubmit=async e=>{e.preventDefault();$("#le").textContent="";const btn=e.target.querySelector("button");btn.disabled=true;
+  try{await Auth.login($("#em").value,$("#pw").value)}catch(err){$("#le").textContent=err?.code==="auth/too-many-requests"?"Muitas tentativas. Aguarde e tente de novo.":err?.code==="auth/network-request-failed"?"Falha de rede ao conectar no Firebase.":"E-mail ou senha incorretos."}
+  finally{btn.disabled=false}};
 
 function form(title,fields,save){
   const d=$("#dlg");
@@ -302,17 +310,28 @@ vendas(){const m=monthSales();return `<div class="card"><div class="row"><h3>Ven
   <p><b>${R(sum(m))}</b> em ${m.length} vendas</p>${T(["Data","Itens","Canal","Pgto","Total",""],m.map(s=>[D(s.ts),s.items.map(i=>`${i.q}x ${esc(i.name)}`).join(", ")+(s.client?`<br><small class="m">${esc(s.client)}</small>`:""),esc(s.ch),esc(s.pay),R(s.total),Bt("Cancelar","A.cancel('"+s.id+"')","d")]))}</div>`}
 };
 function render(){
+  if(!document.body.classList.contains("in"))return;
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===S.tab));
   const keep=["ch","pay","cl"].map(i=>$("#"+i)?.value);
   $("#main").innerHTML=`<h2>${TABS[S.tab]}</h2>`+V[S.tab]();
   if(S.tab==="vender")["ch","pay","cl"].forEach((i,n)=>{if(keep[n])$("#"+i).value=keep[n]});
 }
-Auth.on(u=>{
+function gate(u){
+  document.body.classList.remove("booting");
+  document.body.classList.toggle("in",!!u);
+  $("#login").hidden=!!u;
+  $("#app").hidden=!u;
   unsubs.forEach(f=>f());unsubs=[];
-  $("#login").hidden=!!u;$("#app").hidden=!u;
-  if(!u)return;
+  if(!u){
+    S.cart=[];S.tab="painel";
+    COLS.forEach(c=>S[c]=[]);
+    $("#main").innerHTML="";
+    const d=$("#dlg");if(d.open)d.close();
+    return;
+  }
   for(const c of COLS)unsubs.push(DB.sub(c,l=>{S[c]=l;render()}));
-});
+}
+Auth.on(gate);
 </script>
 </body>
 </html>
