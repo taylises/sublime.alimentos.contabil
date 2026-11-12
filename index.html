@@ -267,7 +267,7 @@ const authMsg = code => ({
   "auth/too-many-requests": "Muitas tentativas. Aguarde e tente de novo.",
   "auth/network-request-failed": "Falha de rede ao conectar no Firebase.",
   "auth/user-disabled": "Esta conta está desativada.",
-  "permission-denied": "Sem permissão no Firestore (é preciso estar logado)."
+  "permission-denied": "Sem permissão no Firestore. Atualize as regras para users/{userId}/… com request.auth.uid == userId."
 }[code] || "Não foi possível concluir. Tente de novo.");
 
 async function needAuth() {
@@ -288,29 +288,32 @@ function dbFail(e) {
 }
 
 const cv = o => Object.fromEntries(Object.entries(o).map(([k,v]) => [k, v && v.inc !== undefined ? fs.increment(v.inc) : v]));
+const uid = () => auth.currentUser?.uid;
+const colRef = c => fs.collection(db, "users", uid(), c);
+const docRef = (c, id) => fs.doc(db, "users", uid(), c, id);
 
 const DB = {
   sub: (c, cb) => {
     if (!logged()) return () => {};
     return fs.onSnapshot(
-      fs.collection(db, c),
+      colRef(c),
       s => cb(s.docs.map(x => ({ id: x.id, ...x.data() }))),
       e => dbFail(e)
     );
   },
   add: async (c, o) => {
     if (!(await needAuth())) return;
-    try { return await fs.addDoc(fs.collection(db, c), cv(o)); }
+    try { return await fs.addDoc(colRef(c), cv(o)); }
     catch (e) { return dbFail(e); }
   },
   upd: async (c, id, o) => {
     if (!(await needAuth())) return;
-    try { return await fs.updateDoc(fs.doc(db, c, id), cv(o)); }
+    try { return await fs.updateDoc(docRef(c, id), cv(o)); }
     catch (e) { return dbFail(e); }
   },
   del: async (c, id) => {
     if (!(await needAuth())) return;
-    try { return await fs.deleteDoc(fs.doc(db, c, id)); }
+    try { return await fs.deleteDoc(docRef(c, id)); }
     catch (e) { return dbFail(e); }
   },
   batch: async ops => {
@@ -318,9 +321,9 @@ const DB = {
     try {
       const b = fs.writeBatch(db);
       ops.forEach(p => {
-        if (p.t === "set") b.set(fs.doc(fs.collection(db, p.c)), cv(p.o));
-        else if (p.t === "upd") b.update(fs.doc(db, p.c, p.id), cv(p.o));
-        else b.delete(fs.doc(db, p.c, p.id));
+        if (p.t === "set") b.set(fs.doc(colRef(p.c)), cv(p.o));
+        else if (p.t === "upd") b.update(docRef(p.c, p.id), cv(p.o));
+        else b.delete(docRef(p.c, p.id));
       });
       await b.commit();
     } catch (e) { return dbFail(e); }
@@ -711,17 +714,18 @@ function gate(u) {
   user = u || null;
   document.body.classList.remove("booting");
   closeNav();
+  unsubs.forEach(f => f());
+  unsubs = [];
+  S.cart = [];
+  S.tab = "painel";
+  COLS.forEach(c => S[c] = []);
+  $("#main").innerHTML = "";
+  const d = $("#dlg"); if (d.open) d.close();
   document.body.classList.toggle("in", !!user);
   $("#login").hidden = !!user;
   $("#app").hidden = !user;
-  unsubs.forEach(f => f());
-  unsubs = [];
   if (!user) {
-    S.cart = []; S.tab = "painel";
-    COLS.forEach(c => S[c] = []);
-    $("#main").innerHTML = "";
     $("#who").textContent = "";
-    const d = $("#dlg"); if (d.open) d.close();
     return;
   }
   $("#who").textContent = user.email || "";
